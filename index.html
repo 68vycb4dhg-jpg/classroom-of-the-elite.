@@ -250,6 +250,8 @@ async function register() {
         groupCode
       }
     });
+    
+    window.register = register;
 
     if (error) {
       let detail = error.message;
