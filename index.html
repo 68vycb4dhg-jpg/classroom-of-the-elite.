@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090d">
+  <title>THE CLASSROOM OF THE ELITE</title>
+  <style>
+    :root{--bg:#09090d;--panel:#121219;--panel2:#191923;--red:#d62839;--red2:#ff4055;--text:#f5f5f7;--muted:#a4a4b3;--line:#2b2b38;--green:#51d69a}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#241018 0%,#0b0b10 48%,#07070a 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    .wrap{width:min(1050px,92%);margin:0 auto;padding:28px 0 60px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:28px}
+    .brand{font-weight:900;letter-spacing:.12em;font-size:clamp(17px,3vw,25px)}
+    .brand span{color:var(--red2)}
+    .tag{color:var(--muted);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+    .panel{background:linear-gradient(145deg,rgba(25,25,35,.97),rgba(14,14,20,.97));border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 55px #0007;animation:rise .35s ease both}
+    @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+    h1,h2,h3{margin:0 0 14px}h1{font-size:clamp(25px,5vw,38px);line-height:1.12}h2{font-size:22px}h3{font-size:16px}
+    p{color:var(--muted);line-height:1.6}
+    .accent{color:var(--red2)}.muted{color:var(--muted)}.small{font-size:12px}
+    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .stack{display:grid;gap:12px}
+    label{display:block;color:#d8d8e0;font-size:13px;margin:0 0 7px}
+    input,select{width:100%;background:#0c0c12;border:1px solid #353542;color:var(--text);border-radius:10px;padding:13px 14px;font-size:15px;outline:none}
+    input:focus,select:focus{border-color:var(--red2);box-shadow:0 0 0 3px #d6283928}
+    button{border:0;border-radius:10px;padding:13px 16px;background:var(--red);color:white;font-weight:750;font-size:14px;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
+    button:hover{background:var(--red2);transform:translateY(-1px)}button:disabled{opacity:.5;cursor:wait;transform:none}
+    button.secondary{background:#292936;border:1px solid #414151}button.secondary:hover{background:#383847}
+    button.ghost{background:transparent;border:1px solid var(--line);color:#eee}
+    .tabs{display:flex;gap:8px;margin-bottom:20px}.tabs button{flex:1}
+    .hidden{display:none!important}
+    .message{margin-top:12px;padding:11px 13px;border-radius:10px;background:#29202a;border:1px solid #63313d;color:#ffdce1;font-size:13px;white-space:pre-wrap}
+    .message.ok{background:#14251f;border-color:#245b45;color:#c9ffe6}
+    .topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .stat{background:#0c0c12;border:1px solid var(--line);border-radius:14px;padding:17px}
+    .stat strong{display:block;font-size:28px;margin-top:5px}
+    .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse;min-width:460px;background:#0d0d13}
+    th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px}
+    th{color:#bdbdca;background:#171720;font-weight:700}
+    tr:last-child td{border-bottom:0}
+    .rank{color:var(--red2);font-weight:900}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .actions input{max-width:110px}
+    .section{margin-top:18px}
+    .playername{font-weight:800;font-size:18px}
+    .rule{height:1px;background:var(--line);margin:20px 0}
+    footer{text-align:center;color:#777785;font-size:11px;margin-top:22px;letter-spacing:.08em}
+    @media(max-width:680px){.grid{grid-template-columns:1fr}.panel{padding:18px}.wrap{width:94%;padding-top:18px}header{align-items:flex-start;flex-direction:column}.tabs{flex-direction:column}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">THE <span>CLASSROOM</span> OF THE ELITE</div>
+      <div class="tag">Knowledge · Strategy · Merit</div>
+    </div>
+    <div id="headerActions" class="actions hidden"><span id="whoami" class="small muted"></span><button class="secondary" onclick="logout()">Déconnexion</button></div>
+  </header>
+
+  <main id="authView" class="panel">
+    <div class="tag">Bienvenue</div>
+    <h1>Gagne ta place.<br><span class="accent">Prouve ta valeur.</span></h1>
+    <p>Connecte-toi ou crée ton compte pour rejoindre ta classe.</p>
+    <div class="tabs">
+      <button id="loginTab" onclick="showAuthTab('login')">Connexion</button>
+      <button id="registerTab" class="secondary" onclick="showAuthTab('register')">Créer un compte</button>
+    </div>
+    <section id="loginForm" class="stack">
+      <div><label for="loginId">Email ou pseudo</label><input id="loginId" autocomplete="username" placeholder="Ton email ou pseudo"></div>
+      <div><label for="loginPass">Mot de passe</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Mot de passe"></div>
+      <button id="loginBtn" onclick="login()">Se connecter</button>
+    </section>
+    <section id="registerForm" class="stack hidden">
+      <div><label for="regId">Email ou pseudo (3 à 20 caractères pour un pseudo)</label><input id="regId" autocomplete="username" placeholder="Email ou pseudo"></div>
+      <div><label for="regPass">Mot de passe (6 caractères minimum)</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Mot de passe"></div>
+      <div><label for="regGroup">Choisir un groupe</label><select id="regGroup"><option value="">Sélectionner un groupe</option><option value="07392c93-b88e-4eda-b92c-b593c8075465">Group A</option><option value="48cb0b9c-ecaf-4611-9c47-3da5c96487e8">Group B</option><option value="6cb85a0a-b4aa-4adf-aa0d-91530a55f66f">Group C</option><option value="a6ef7a23-a04b-46cf-acde-a1fd58d01ed6">Group D</option></select></div>
+      <div><label for="regCode">Code secret du groupe</label><input id="regCode" type="password" autocomplete="off" placeholder="Code secret"></div>
+      <button id="registerBtn" onclick="register()">Créer mon compte</button>
+    </section>
+    <div id="authMessage" class="message hidden" role="status"></div>
+    <p class="small">Chaque nouveau joueur commence avec 100 points. Aucun plafond de points.</p>
+  </main>
+
+  <main id="appView" class="hidden">
+    <section class="panel">
+      <div class="topline">
+        <div><div class="tag">Espace joueur</div><div class="playername" id="playerName">Joueur</div><div class="muted small" id="playerGroup">Groupe</div></div>
+        <div class="stat"><span class="muted small">TES POINTS</span><strong id="myPoints">—</strong></div>
+      </div>
+      <div class="grid">
+        <div class="stat"><span class="muted small">CLASSEMENT</span><strong id="myRank">—</strong></div>
+        <div class="stat"><span class="muted small">GROUPE</span><strong id="myGroupShort">—</strong></div>
+      </div>
+      <div class="section">
+        <h2>Classement général</h2>
+        <p class="small">Le classement affiche les noms et les groupes, sans révéler les points des autres joueurs.</p>
+        <div id="leaderboard" class="tablewrap"></div>
+      </div>
+      <div class="section">
+        <h2>Scores de ton groupe</h2>
+        <p class="small">Débloque une fois les scores de ton groupe pour 10 points.</p>
+        <button id="unlockBtn" onclick="unlockScores()">Débloquer les scores — 10 points</button>
+        <div id="groupScores" class="section"></div>
+      </div>
+    </section>
+
+    <section id="adminPanel" class="panel section hidden">
+      <div class="topline"><div><div class="tag">Contrôle réservé</div><h2>Administration</h2></div><span class="accent small">ADMIN</span></div>
+      <div class="actions"><button onclick="loadAdmin()">Actualiser les joueurs</button><button class="secondary" onclick="resetAllPoints()">Réinitialiser tous les points à 100</button></div>
+      <p class="small">La réinitialisation concerne tous les joueurs et demande une confirmation.</p>
+      <div id="adminMessage" class="message hidden"></div>
+      <div id="adminPlayers" class="tablewrap section"></div>
+    </section>
+  </main>
+  <footer>THE CLASSROOM OF THE ELITE · OFFICIAL CLASS PORTAL</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(() => {
+  "use strict";
+
+  const SUPABASE_URL = "https://spvdgioumjjjxumanble.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
+  const GROUPS = {
+    "07392c93-b88e-4eda-b92c-b593c8075465": "Group A",
+    "48cb0b9c-ecaf-4611-9c47-3da5c96487e8": "Group B",
+    "6cb85a0a-b4aa-4adf-aa0d-91530a55f66f": "Group C",
+    "a6ef7a23-a04b-46cf-acde-a1fd58d01ed6": "Group D"
+  };
+
+  const $ = (id) => document.getElementById(id);
+  let sb = null;
+  let currentUser = null;
+  let profile = null;
+  let unlocked = false;
+
+  function showMessage(id, message, success=false) {
+    const el = $(id);
+    el.textContent = message;
+    el.classList.remove("hidden", "ok");
+    if (success) el.classList.add("ok");
+  }
+  function clearMessage(id) {
+    const el = $(id);
+    el.textContent = "";
+    el.classList.add("hidden");
+    el.classList.remove("ok");
+  }
+  function groupName(id) { return GROUPS[id] || "Groupe inconnu"; }
+  function authEmail(identifier) {
+    const value = identifier.trim().toLowerCase();
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+      ? value
+      : value + "@classroom-of-the-elite.invalid";
+  }
+  function setBusy(id, busy, label) {
+    const b = $(id);
+    if (!b) return;
+    b.disabled = busy;
+    if (label) {
+      if (busy) { b.dataset.oldLabel = b.textContent; b.textContent = label; }
+      else if (b.dataset.oldLabel) { b.textContent = b.dataset.oldLabel; delete b.dataset.oldLabel; }
+    }
+  }
+
+  window.showAuthTab = function(tab) {
+    const loginMode = tab === "login";
+    $("loginForm").classList.toggle("hidden", !loginMode);
+    $("registerForm").classList.toggle("hidden", loginMode);
+    $("loginTab").classList.toggle("secondary", !loginMode);
+    $("registerTab").classList.toggle("secondary", loginMode);
+    clearMessage("authMessage");
+  };
+
+  async function getFunctionError(error) {
+    let detail = error?.message || "Erreur inconnue.";
+    try {
+      const response = error?.context;
+      if (response && typeof response.clone === "function") {
+        const body = await response.clone().json();
+        if (body?.error) detail = body.error;
+      }
+    } catch (_) {}
+    return detail;
+  }
+
+  window.register = async function() {
+    clearMessage("authMessage");
+    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
+
+    const identifier = $("regId").value.trim();
+    const password = $("regPass").value;
+    const groupId = $("regGroup").value;
+    const groupCode = $("regCode").value.trim();
+
+    if (!identifier || !password || !groupId || !groupCode) {
+      showMessage("authMessage", "Remplis tous les champs."); return;
+    }
+    if (password.length < 6) {
+      showMessage("authMessage", "Le mot de passe doit contenir au moins 6 caractères."); return;
+    }
+
+    setBusy("registerBtn", true, "Création en cours…");
+    try {
+      const { data, error } = await sb.functions.invoke("register-player", {
+        body: { identifier, password, groupId, groupCode }
+      });
+      if (error) {
+        showMessage("authMessage", "Erreur : " + await getFunctionError(error));
+        return;
+      }
+      if (data?.error || !data?.success) {
+        showMessage("authMessage", "Erreur : " + (data?.error || "Réponse inattendue du serveur."));
+        return;
+      }
+
+      const { error: loginError } = await sb.auth.signInWithPassword({
+        email: authEmail(identifier),
+        password
+      });
+      if (loginError) {
+        showMessage("authMessage", "Compte créé ! Connecte-toi maintenant avec tes identifiants.", true);
+        window.showAuthTab("login");
+        $("loginId").value = identifier;
+        return;
+      }
+      await enterApp();
+    } catch (e) {
+      showMessage("authMessage", "Erreur : " + (e?.message || "Impossible de créer le compte."));
+    } finally {
+      setBusy("registerBtn", false);
+    }
+  };
+
+  window.login = async function() {
+    clearMessage("authMessage");
+    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
+    const identifier = $("loginId").value.trim();
+    const password = $("loginPass").value;
+    if (!identifier || !password) { showMessage("authMessage", "Entre ton identifiant et ton mot de passe."); return; }
+
+    setBusy("loginBtn", true, "Connexion…");
+    try {
+      const { error } = await sb.auth.signInWithPassword({
+        email: authEmail(identifier),
+        password
+      });
+      if (error) { showMessage("authMessage", "Connexion impossible : " + error.message); return; }
+      await enterApp();
+    } catch (e) {
+      showMessage("authMessage", "Erreur : " + (e?.message || "Connexion impossible."));
+    } finally {
+      setBusy("loginBtn", false);
+    }
+  };
+
+  window.logout = async function() {
+    if (sb) await sb.auth.signOut();
+    currentUser = null; profile = null;
+    $("appView").classList.add("hidden");
+    $("authView").classList.remove("hidden");
+    $("headerActions").classList.add("hidden");
+    clearMessage("authMessage");
+    window.showAuthTab("login");
+  };
+
+  async function enterApp() {
+    const { data: userData } = await sb.auth.getUser();
+    currentUser = userData?.user || null;
+    if (!currentUser) { window.logout(); return; }
+
+    const { data, error } = await sb.from("profiles")
+      .select("id, display_name, group_id, role, points")
+      .eq("id", currentUser.id)
+      .single();
+
+    if (error || !data) {
+      showMessage("authMessage", "Connexion réussie, mais profil introuvable : " + (error?.message || ""));
+      await sb.auth.signOut();
+      return;
+    }
+    profile = data;
+    $("authView").classList.add("hidden");
+    $("appView").classList.remove("hidden");
+    $("headerActions").classList.remove("hidden");
+    $("whoami").textContent = profile.display_name;
+    $("playerName").textContent = profile.display_name;
+    $("playerGroup").textContent = groupName(profile.group_id);
+    $("myGroupShort").textContent = groupName(profile.group_id);
+    $("myPoints").textContent = Number(profile.points).toLocaleString("fr-FR");
+    $("adminPanel").classList.toggle("hidden", profile.role !== "admin");
+    await refreshDashboard();
+  }
+
+  async function refreshProfile() {
+    const { data, error } = await sb.from("profiles")
+      .select("id, display_name, group_id, role, points")
+      .eq("id", currentUser.id).single();
+    if (error) throw error;
+    profile = data;
+    $("myPoints").textContent = Number(profile.points).toLocaleString("fr-FR");
+  }
+
+  async function refreshDashboard() {
+    await refreshProfile();
+    await loadLeaderboard();
+    await loadGroupScores();
+    if (profile.role === "admin") await loadAdmin();
+  }
+
+  async function loadLeaderboard() {
+    const { data, error } = await sb.rpc("get_leaderboard");
+    if (error) {
+      $("leaderboard").innerHTML = '<div class="message">Impossible de charger le classement : ' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+    const rows = Array.isArray(data) ? data : [];
+    const myRow = rows.find(r => r.player_name === profile.display_name);
+    $("myRank").textContent = myRow ? "#" + myRow.player_rank : "—";
+    if (!rows.length) {
+      $("leaderboard").innerHTML = '<p class="muted">Aucun joueur classé pour le moment.</p>';
+      return;
+    }
+    $("leaderboard").innerHTML = '<table><thead><tr><th>Rang</th><th>Joueur</th><th>Groupe</th></tr></thead><tbody>' +
+      rows.map(r => '<tr><td class="rank">#' + escapeHtml(r.player_rank) + '</td><td>' + escapeHtml(r.player_name) + '</td><td>' + escapeHtml(r.group_name) + '</td></tr>').join("") +
+      '</tbody></table>';
+  }
+
+  async function loadGroupScores() {
+    const { data, error } = await sb.rpc("get_group_scores");
+    if (error) {
+      $("groupScores").innerHTML = '<div class="message">Scores indisponibles : ' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+    const rows = Array.isArray(data) ? data : [];
+    if (!rows.length) {
+      $("groupScores").innerHTML = '<p class="muted small">Les scores sont verrouillés. Utilise le bouton ci-dessus pour les débloquer.</p>';
+      return;
+    }
+    $("unlockBtn").classList.add("hidden");
+    $("groupScores").innerHTML = '<div class="tablewrap"><table><thead><tr><th>Joueur</th><th>Points</th></tr></thead><tbody>' +
+      rows.map(r => '<tr><td>' + escapeHtml(r.player_name) + '</td><td><strong>' + Number(r.player_points).toLocaleString("fr-FR") + '</strong></td></tr>').join("") +
+      '</tbody></table></div>';
+  }
+
+  window.unlockScores = async function() {
+    const b = $("unlockBtn");
+    b.disabled = true;
+    b.textContent = "Déblocage…";
+    try {
+      const { data, error } = await sb.rpc("unlock_group_scores");
+      if (error) { showMessage("authMessage", "Déblocage impossible : " + error.message); return; }
+      if (data !== true) { showMessage("authMessage", "Tu n'as peut-être pas assez de points ou les scores sont déjà débloqués."); return; }
+      await refreshDashboard();
+      showMessage("authMessage", "Scores de ton groupe débloqués !", true);
+    } catch (e) {
+      showMessage("authMessage", "Erreur : " + (e?.message || "Déblocage impossible."));
+    } finally {
+      b.disabled = false;
+      b.textContent = "Débloquer les scores — 10 points";
+    }
+  };
+
+  window.loadAdmin = async function() {
+    if (!profile || profile.role !== "admin") return;
+    const { data, error } = await sb.from("profiles")
+      .select("id, display_name, group_id, role, points")
+      .order("points", { ascending: false });
+    if (error) {
+      $("adminPlayers").innerHTML = '<div class="message">Erreur : ' + escapeHtml(error.message) + '</div>';
+      return;
+    }
+    const rows = Array.isArray(data) ? data : [];
+    $("adminPlayers").innerHTML = '<table><thead><tr><th>Joueur</th><th>Groupe</th><th>Points</th><th>Modifier</th></tr></thead><tbody>' +
+      rows.map(r => '<tr><td>' + escapeHtml(r.display_name) + (r.role === "admin" ? ' <span class="accent">(admin)</span>' : '') +
+      '</td><td>' + escapeHtml(groupName(r.group_id)) + '</td><td>' + Number(r.points).toLocaleString("fr-FR") +
+      '</td><td><div class="actions"><input type="number" id="delta-' + escapeHtml(r.id) + '" placeholder="+/-" aria-label="Variation des points"><button class="secondary" onclick="adjustPoints(\'' + escapeHtml(r.id) + '\')">Appliquer</button></div></td></tr>').join("") +
+      '</tbody></table>';
+  };
+
+  window.adjustPoints = async function(playerId) {
+    if (!profile || profile.role !== "admin") return;
+    const input = $("delta-" + playerId);
+    const delta = Number(input?.value);
+    if (!Number.isSafeInteger(delta) || delta === 0) {
+      showAdminMessage("Entre un nombre entier différent de zéro."); return;
+    }
+    const { error } = await sb.rpc("admin_adjust_points", {
+      p_player_id: playerId,
+      p_delta: delta
+    });
+    if (error) { showAdminMessage("Modification refusée : " + error.message); return; }
+    showAdminMessage("Points mis à jour.", true);
+    await refreshProfile();
+    await loadAdmin();
+    await loadLeaderboard();
+  };
+
+  window.resetAllPoints = async function() {
+    if (!profile || profile.role !== "admin") return;
+    const confirmed = confirm("Confirmer la réinitialisation ? Tous les joueurs retrouveront 100 points.");
+    if (!confirmed) return;
+    const { error } = await sb.rpc("admin_reset_points");
+    if (error) { showAdminMessage("Réinitialisation refusée : " + error.message); return; }
+    showAdminMessage("Tous les joueurs ont maintenant 100 points.", true);
+    await refreshDashboard();
+  };
+
+  function showAdminMessage(message, success=false) {
+    showMessage("adminMessage", message, success);
+  }
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    }[c]));
+  }
+
+  async function init() {
+    if (!window.supabase || typeof window.supabase.createClient !== "function") {
+      showMessage("authMessage", "La bibliothèque Supabase ne s'est pas chargée. Vérifie ta connexion puis recharge.");
+      return;
+    }
+    try {
+      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      const { data } = await sb.auth.getSession();
+      if (data?.session) await enterApp();
+    } catch (e) {
+      showMessage("authMessage", "Initialisation impossible : " + (e?.message || "Erreur inconnue."));
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
