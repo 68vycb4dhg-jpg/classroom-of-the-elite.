@@ -259,10 +259,19 @@ const { data, error } = await db.functions.invoke("register-player", {
  });
 
  if(error){
+  let detail = error.message;
 
-  msg("Erreur : "+error.message);return;
+  try {
+    const response = error.context;
+    if(response && typeof response.clone === "function"){
+      const body = await response.clone().json();
+      if(body?.error) detail = body.error;
+    }
+  } catch {}
 
- }
+  msg("Erreur : " + detail);
+  return;
+}
 
  if(data?.error){msg(data.error);return;}
 
