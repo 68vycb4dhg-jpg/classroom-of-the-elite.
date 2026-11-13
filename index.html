@@ -475,6 +475,51 @@ window.switchPage = function(page) {
 
   init();
 })();
+async function loadPlayersForAdmin() {
+    if (!isAdmin) return;
+
+    const { data: players, error } = await supabase
+        .from('profiles')
+        .select('id, display_name, role')
+        .order('display_name');
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    const container = document.getElementById('adminPlayersList');
+
+    container.innerHTML = players
+        .filter(p => p.role !== 'admin')
+        .map(p => `
+            <div class="admin-player">
+                <span>${escapeHtml(p.display_name)}</span>
+                <button onclick="deletePlayer('${p.id}')">
+                    🗑️ Supprimer
+                </button>
+            </div>
+        `).join('');
+}
+
+async function deletePlayer(playerId) {
+    if (!isAdmin) return;
+
+    if (!confirm('Supprimer définitivement ce joueur ?')) return;
+
+    const { error } = await supabase.rpc(
+        'admin_delete_player',
+        { p_player_id: playerId }
+    );
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    alert('Joueur supprimé !');
+    await loadPlayersForAdmin();
+}
 </script>
 </body>
 </html>
