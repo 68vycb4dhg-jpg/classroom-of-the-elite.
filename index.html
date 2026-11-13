@@ -222,25 +222,64 @@ function validConfig(){
 
 }
 
-async function register(){
 
- msg("");
+async function register() {
+  msg("");
 
- if(!validConfig()) return;
+  if (!validConfig()) return;
 
- const identifier=document.getElementById("regId").value.trim();
+  const identifier = document.getElementById("regId").value.trim();
+  const password = document.getElementById("regPass").value;
+  const groupId = document.getElementById("regGroup").value;
+  const groupCode = document.getElementById("regCode").value.trim();
 
- const password=document.getElementById("regPass").value;
+  if (!identifier || !password || !groupId || !groupCode) {
+    msg("Remplis tous les champs.");
+    return;
+  }
 
- const groupId=document.getElementById("regGroup").value;
+  const btn = document.querySelector("#registerBtn");
+  if (btn) btn.disabled = true;
 
- const groupCode=document.getElementById("regCode").value;
+  try {
+    const { data, error } = await db.functions.invoke("register-player", {
+      body: {
+        identifier,
+        password,
+        groupId,
+        groupCode
+      }
+    });
 
- if(!identifier || !password || !groupId || !groupCode){
+    if (error) {
+      let detail = error.message;
 
-  msg("Remplis tous les champs.");return;
+      try {
+        const response = error.context;
+        if (response) {
+          const result = await response.clone().json();
+          if (result.error) detail = result.error;
+        }
+      } catch {}
 
- }
+      msg("Erreur : " + detail);
+      return;
+    }
+
+    if (data?.error) {
+      msg("Erreur : " + data.error);
+      return;
+    }
+
+    msg("Compte créé avec succès !");
+
+  } catch (e) {
+    msg("Erreur : " + e.message);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
 
  msg("Création du compte...");
 
