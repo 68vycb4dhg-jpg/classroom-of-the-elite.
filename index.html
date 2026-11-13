@@ -242,6 +242,8 @@ async function register(){
 
  }
 
+if(!identifier || !password || !groupId || !groupCode){
+
  msg("Création du compte...");
 
 const { data, error } = await db.functions.invoke("register-player", {
