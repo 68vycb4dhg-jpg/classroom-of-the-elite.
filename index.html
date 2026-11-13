@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
   <style>
     :root{--bg:#09090d;--panel:#121219;--panel2:#191923;--red:#d62839;--red2:#ff4055;--text:#f5f5f7;--muted:#a4a4b3;--line:#2b2b38;--green:#51d69a}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:linear-gradient(rgba(5,5,9,.86),rgba(5,5,9,.94)),url("https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=2000&q=85") center/cover fixed;color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#241018 0%,#0b0b10 48%,#07070a 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
     .wrap{width:min(1050px,92%);margin:0 auto;padding:28px 0 60px}
     header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:28px}
     .brand{font-weight:900;letter-spacing:.12em;font-size:clamp(17px,3vw,25px)}
@@ -27,8 +27,9 @@
     button{border:0;border-radius:10px;padding:13px 16px;background:var(--red);color:white;font-weight:750;font-size:14px;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
     button:hover{background:var(--red2);transform:translateY(-1px)}button:disabled{opacity:.5;cursor:wait;transform:none}
     button.secondary{background:#292936;border:1px solid #414151}button.secondary:hover{background:#383847}
+    button.danger{background:#8f1d2b;border:1px solid #c93649}button.danger:hover{background:#d62839}
     button.ghost{background:transparent;border:1px solid var(--line);color:#eee}
-    .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}.tabs button{flex:1;min-width:110px}.navtabs{margin:18px 0}.navtabs button.active{background:var(--red2);box-shadow:0 0 18px #d6283955}.rules-list{display:grid;gap:10px}.rule-item{background:#0c0c12cc;border:1px solid var(--line);border-right:3px solid var(--red2);padding:14px 16px;border-radius:12px;text-align:right;direction:rtl;font-size:16px;line-height:1.9}.rule-item strong{color:var(--red2);white-space:nowrap}
+    .tabs{display:flex;gap:8px;margin-bottom:20px}.tabs button{flex:1}
     .hidden{display:none!important}
     .message{margin-top:12px;padding:11px 13px;border-radius:10px;background:#29202a;border:1px solid #63313d;color:#ffdce1;font-size:13px;white-space:pre-wrap}
     .message.ok{background:#14251f;border-color:#245b45;color:#c9ffe6}
@@ -57,93 +58,62 @@
       <div class="brand">THE <span>CLASSROOM</span> OF THE ELITE</div>
       <div class="tag">Knowledge · Strategy · Merit</div>
     </div>
-    <div id="headerActions" class="actions hidden"><span id="whoami" class="small muted"></span><button class="secondary" onclick="logout()">Log out</button></div>
+    <div id="headerActions" class="actions hidden"><span id="whoami" class="small muted"></span><button class="secondary" onclick="logout()">Déconnexion</button></div>
   </header>
 
   <main id="authView" class="panel">
-    <div class="tag">WELCOME</div>
-    <h1>Earn your place.<br><span class="accent">Prove your worth.</span></h1>
-    <p>Log in or create an account to join your class.</p>
+    <div class="tag">Bienvenue</div>
+    <h1>Gagne ta place.<br><span class="accent">Prouve ta valeur.</span></h1>
+    <p>Connecte-toi ou crée ton compte pour rejoindre ta classe.</p>
     <div class="tabs">
-      <button id="loginTab" onclick="showAuthTab('login')">Log in</button>
-      <button id="registerTab" class="secondary" onclick="showAuthTab('register')">Create account</button>
+      <button id="loginTab" onclick="showAuthTab('login')">Connexion</button>
+      <button id="registerTab" class="secondary" onclick="showAuthTab('register')">Créer un compte</button>
     </div>
     <section id="loginForm" class="stack">
-      <div><label for="loginId">Email or username</label><input id="loginId" autocomplete="username" placeholder="Your email or username"></div>
-      <div><label for="loginPass">Password</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Password"></div>
+      <div><label for="loginId">Email ou pseudo</label><input id="loginId" autocomplete="username" placeholder="Ton email ou pseudo"></div>
+      <div><label for="loginPass">Mot de passe</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Mot de passe"></div>
       <button id="loginBtn" onclick="login()">Se connecter</button>
     </section>
     <section id="registerForm" class="stack hidden">
-      <div><label for="regId">Email or username (3 à 20 caractères pour un pseudo)</label><input id="regId" autocomplete="username" placeholder="Email or username"></div>
-      <div><label for="regPass">Password (6 caractères minimum)</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Password"></div>
-      <div><label for="regGroup">Choisir un groupe</label><select id="regGroup"><option value="">Select a group</option><option value="07392c93-b88e-4eda-b92c-b593c8075465">Group A</option><option value="48cb0b9c-ecaf-4611-9c47-3da5c96487e8">Group B</option><option value="6cb85a0a-b4aa-4adf-aa0d-91530a55f66f">Group C</option><option value="a6ef7a23-a04b-46cf-acde-a1fd58d01ed6">Group D</option></select></div>
-      <div><label for="regCode">Group access code</label><input id="regCode" type="password" autocomplete="off" placeholder="Code secret"></div>
-      <button id="registerBtn" onclick="register()">Create my account</button>
+      <div><label for="regId">Email ou pseudo (3 à 20 caractères pour un pseudo)</label><input id="regId" autocomplete="username" placeholder="Email ou pseudo"></div>
+      <div><label for="regPass">Mot de passe (6 caractères minimum)</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Mot de passe"></div>
+      <div><label for="regGroup">Choisir un groupe</label><select id="regGroup"><option value="">Sélectionner un groupe</option><option value="07392c93-b88e-4eda-b92c-b593c8075465">Group A</option><option value="48cb0b9c-ecaf-4611-9c47-3da5c96487e8">Group B</option><option value="6cb85a0a-b4aa-4adf-aa0d-91530a55f66f">Group C</option><option value="a6ef7a23-a04b-46cf-acde-a1fd58d01ed6">Group D</option></select></div>
+      <div><label for="regCode">Code secret du groupe</label><input id="regCode" type="password" autocomplete="off" placeholder="Code secret"></div>
+      <button id="registerBtn" onclick="register()">Créer mon compte</button>
     </section>
     <div id="authMessage" class="message hidden" role="status"></div>
-    <p class="small">Every new player starts with 100 points. There is no points limit.</p>
+    <p class="small">Chaque nouveau joueur commence avec 100 points. Aucun plafond de points.</p>
   </main>
 
   <main id="appView" class="hidden">
-    <nav class="tabs navtabs" aria-label="Main navigation">
-      <button id="homeTab" class="active" onclick="switchPage('home')">Home</button>
-      <button id="rulesTab" class="secondary" onclick="switchPage('rules')">Rules</button>
-    </nav>
-    <div id="homePage">
     <section class="panel">
       <div class="topline">
-        <div><div class="tag">PLAYER DASHBOARD</div><div class="playername" id="playerName">Joueur</div><div class="muted small" id="playerGroup">Groupe</div></div>
-        <div class="stat"><span class="muted small">YOUR POINTS</span><strong id="myPoints">—</strong></div>
+        <div><div class="tag">Espace joueur</div><div class="playername" id="playerName">Joueur</div><div class="muted small" id="playerGroup">Groupe</div></div>
+        <div class="stat"><span class="muted small">TES POINTS</span><strong id="myPoints">—</strong></div>
       </div>
       <div class="grid">
-        <div class="stat"><span class="muted small">RANK</span><strong id="myRank">—</strong></div>
-        <div class="stat"><span class="muted small">GROUP</span><strong id="myGroupShort">—</strong></div>
+        <div class="stat"><span class="muted small">CLASSEMENT</span><strong id="myRank">—</strong></div>
+        <div class="stat"><span class="muted small">GROUPE</span><strong id="myGroupShort">—</strong></div>
       </div>
       <div class="section">
-        <h2>Overall ranking</h2>
-        <p class="small">The leaderboard shows names and groups, but not other players’ points.</p>
+        <h2>Classement général</h2>
+        <p class="small">Le classement affiche les noms et les groupes, sans révéler les points des autres joueurs.</p>
         <div id="leaderboard" class="tablewrap"></div>
       </div>
       <div class="section">
-        <h2>Your group scores</h2>
-        <p class="small">Unlock your group’s scores once for 10 points.</p>
-        <button id="unlockBtn" onclick="unlockScores()">Unlock scores — 10 points</button>
+        <h2>Scores de ton groupe</h2>
+        <p class="small">Débloque une fois les scores de ton groupe pour 10 points.</p>
+        <button id="unlockBtn" onclick="unlockScores()">Débloquer les scores — 10 points</button>
         <div id="groupScores" class="section"></div>
       </div>
     </section>
 
     <section id="adminPanel" class="panel section hidden">
-      <div class="topline"><div><div class="tag">RESTRICTED ACCESS</div><h2>Administration</h2></div><span class="accent small">ADMIN</span></div>
-      <div class="actions"><button onclick="loadAdmin()">Refresh players</button><button class="secondary" onclick="resetAllPoints()">Reset all points to 100</button></div>
-      <p class="small">This resets every player’s points and requires confirmation.</p>
+      <div class="topline"><div><div class="tag">Contrôle réservé</div><h2>Administration</h2></div><span class="accent small">ADMIN</span></div>
+      <div class="actions"><button onclick="loadAdmin()">Actualiser les joueurs</button><button class="secondary" onclick="resetAllPoints()">Réinitialiser tous les points à 100</button></div>
+      <p class="small">La réinitialisation concerne tous les joueurs et demande une confirmation.</p>
       <div id="adminMessage" class="message hidden"></div>
       <div id="adminPlayers" class="tablewrap section"></div>
-    </section>
-    </div>
-    <section id="rulesPage" class="panel hidden">
-      <div class="topline"><div><div class="tag">THE CLASSROOM OF THE ELITE</div><h2>CLASS RULES</h2></div><span class="accent small">20 RULES</span></div>
-      <div class="rules-list">
-        <div class="rule-item"><strong>القانون 01</strong> — المنع التام للتكلم عن اللعبة خارج باب القسم</div>
-        <div class="rule-item"><strong>القانون 02</strong> — يسمح بكل شيئ عدا الاعتداء اللفظي والمادي</div>
-        <div class="rule-item"><strong>القانون 03</strong> — يملك كل لاعب 100 نقطة و وصول النقاط الى 0 او اقل يعني الطرد</div>
-        <div class="rule-item"><strong>القانون 04</strong> — يملك كل فريق 500 نقطة (مجموع نقاط اللاعبين في المجموعة)، خسارة النقاط تعني حل الفريق (يتفركت)</div>
-        <div class="rule-item"><strong>القانون 05</strong> — يسمح للمراقب بالتدخل في شؤون اللعبة</div>
-        <div class="rule-item"><strong>القانون 06</strong> — السرية التامة بين اللاعب والمراقب</div>
-        <div class="rule-item"><strong>القانون 07</strong> — محاولة معرفة أي معلومة تكلف اللاعب 10 نقاط حتى 25 بالمئة من نقاطه حسب قيمة المعلومة</div>
-        <div class="rule-item"><strong>القانون 08</strong> — يسمح للاعب خيانة فريقه والانضمام الى فريق جديد</div>
-        <div class="rule-item"><strong>القانون 09</strong> — في حالة تمكن أحد اللاعبين من الفوز يخبر المراقب بسرية تامة لحصوله على النقاط بسرية تامة</div>
-        <div class="rule-item"><strong>القانون 10</strong> — يسمح بكل التحالفات السرية بين اللاعبين على غرار مجموعاتهم</div>
-        <div class="rule-item"><strong>القانون 11</strong> — مجلس الطلبة يتكون من 3 لاعبين وما هو سري بينهم يبقى سرياً تماماً</div>
-        <div class="rule-item"><strong>القانون 12</strong> — لمجلس الطلبة مهام إضافية يُجزى عليها بإعطائه رصيد 25 بالمئة من نقاطه</div>
-        <div class="rule-item"><strong>القانون 13</strong> — للحصول على مجلس الطلبة يلزم سقوط أحد الأعضاء من خلال عدم إتقانه لعمله الذي يجهله الجميع</div>
-        <div class="rule-item"><strong>القانون 14</strong> — من مهام مجلس الطلبة الاتفاق على الألعاب والقوانين</div>
-        <div class="rule-item"><strong>القانون 15</strong> — يمكن لمجلس الطلبة التغيير في القوانين في حالة تغلبهم على المراقب</div>
-        <div class="rule-item"><strong>القانون 16</strong> — الذي يتمكن من سلب إمكانيات المراقب يحصل على 1000 نقطة كمكافأة</div>
-        <div class="rule-item"><strong>القانون 17</strong> — الاعتراض على المراقب ممنوع منعاً باتاً في حالة الضعف ضده</div>
-        <div class="rule-item"><strong>القانون 18</strong> — لا يمكن لأي لاعب أن يبوح بأسراره للخصوم علناً حتى لا يفقد نقطة واحدة</div>
-        <div class="rule-item"><strong>القانون 19</strong> — إذا سُرّبت معلومة إلى خارج القسم، من يكتشف المسرّب يُكافأ بـ50 بالمئة من نقاطه</div>
-        <div class="rule-item"><strong>القانون 20</strong> — الاعتراض أو مخالفة القوانين التسعة عشر السابقة تعني الطرد أو عقوبة يفرضها صاحب السلطان (الذي تمكن من التحكم في اللعبة)</div>
-      </div>
     </section>
   </main>
   <footer>THE CLASSROOM OF THE ELITE · OFFICIAL CLASS PORTAL</footer>
@@ -151,15 +121,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-window.switchPage = function(page) {
-  const isRules = page === 'rules';
-  document.getElementById('homePage').classList.toggle('hidden', isRules);
-  document.getElementById('rulesPage').classList.toggle('hidden', !isRules);
-  document.getElementById('homeTab').classList.toggle('active', !isRules);
-  document.getElementById('rulesTab').classList.toggle('active', isRules);
-  document.getElementById('homeTab').classList.toggle('secondary', isRules);
-  document.getElementById('rulesTab').classList.toggle('secondary', !isRules);
-};
 (() => {
   "use strict";
 
@@ -230,7 +191,7 @@ window.switchPage = function(page) {
 
   window.register = async function() {
     clearMessage("authMessage");
-    if (!sb) { showMessage("authMessage", "Log in Supabase indisponible. Recharge la page."); return; }
+    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
 
     const identifier = $("regId").value.trim();
     const password = $("regPass").value;
@@ -278,21 +239,21 @@ window.switchPage = function(page) {
 
   window.login = async function() {
     clearMessage("authMessage");
-    if (!sb) { showMessage("authMessage", "Log in Supabase indisponible. Recharge la page."); return; }
+    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
     const identifier = $("loginId").value.trim();
     const password = $("loginPass").value;
     if (!identifier || !password) { showMessage("authMessage", "Entre ton identifiant et ton mot de passe."); return; }
 
-    setBusy("loginBtn", true, "Log in…");
+    setBusy("loginBtn", true, "Connexion…");
     try {
       const { error } = await sb.auth.signInWithPassword({
         email: authEmail(identifier),
         password
       });
-      if (error) { showMessage("authMessage", "Log in impossible : " + error.message); return; }
+      if (error) { showMessage("authMessage", "Connexion impossible : " + error.message); return; }
       await enterApp();
     } catch (e) {
-      showMessage("authMessage", "Erreur : " + (e?.message || "Log in impossible."));
+      showMessage("authMessage", "Erreur : " + (e?.message || "Connexion impossible."));
     } finally {
       setBusy("loginBtn", false);
     }
@@ -319,7 +280,7 @@ window.switchPage = function(page) {
       .single();
 
     if (error || !data) {
-      showMessage("authMessage", "Log in réussie, mais profil introuvable : " + (error?.message || ""));
+      showMessage("authMessage", "Connexion réussie, mais profil introuvable : " + (error?.message || ""));
       await sb.auth.signOut();
       return;
     }
@@ -396,12 +357,12 @@ window.switchPage = function(page) {
       if (error) { showMessage("authMessage", "Déblocage impossible : " + error.message); return; }
       if (data !== true) { showMessage("authMessage", "Tu n'as peut-être pas assez de points ou les scores sont déjà débloqués."); return; }
       await refreshDashboard();
-      showMessage("authMessage", "Your group scores débloqués !", true);
+      showMessage("authMessage", "Scores de ton groupe débloqués !", true);
     } catch (e) {
       showMessage("authMessage", "Erreur : " + (e?.message || "Déblocage impossible."));
     } finally {
       b.disabled = false;
-      b.textContent = "Unlock scores — 10 points";
+      b.textContent = "Débloquer les scores — 10 points";
     }
   };
 
@@ -415,11 +376,29 @@ window.switchPage = function(page) {
       return;
     }
     const rows = Array.isArray(data) ? data : [];
-    $("adminPlayers").innerHTML = '<table><thead><tr><th>Joueur</th><th>Groupe</th><th>Points</th><th>Modifier</th></tr></thead><tbody>' +
+    $("adminPlayers").innerHTML = '<table><thead><tr><th>Joueur</th><th>Groupe</th><th>Points</th><th>Modifier</th><th>Suppression</th></tr></thead><tbody>' +
       rows.map(r => '<tr><td>' + escapeHtml(r.display_name) + (r.role === "admin" ? ' <span class="accent">(admin)</span>' : '') +
       '</td><td>' + escapeHtml(groupName(r.group_id)) + '</td><td>' + Number(r.points).toLocaleString("fr-FR") +
-      '</td><td><div class="actions"><input type="number" id="delta-' + escapeHtml(r.id) + '" placeholder="+/-" aria-label="Variation des points"><button class="secondary" onclick="adjustPoints(\'' + escapeHtml(r.id) + '\')">Appliquer</button></div></td></tr>').join("") +
+      '</td><td><div class="actions"><input type="number" id="delta-' + escapeHtml(r.id) + '" placeholder="+/-" aria-label="Variation des points"><button class="secondary" onclick="adjustPoints(\'' + escapeHtml(r.id) + '\')">Appliquer</button></div></td>' +
+      '<td>' + (r.role === "admin" ? '<span class="muted small">Protégé</span>' : '<button class="danger" onclick="deletePlayer(\'' + escapeHtml(r.id) + '\')">Supprimer</button>') + '</td></tr>').join("") +
       '</tbody></table>';
+  };
+
+  window.deletePlayer = async function(playerId) {
+    if (!profile || profile.role !== "admin") return;
+    const confirmed = confirm("Supprimer le profil de ce joueur ? Cette action est définitive pour son profil.");
+    if (!confirmed) return;
+
+    const { error } = await sb.rpc("admin_delete_player", { p_player_id: playerId });
+    if (error) {
+      showAdminMessage("Suppression refusée : " + error.message);
+      return;
+    }
+
+    showAdminMessage("Profil du joueur supprimé.", true);
+    await loadAdmin();
+    await loadLeaderboard();
+    await loadGroupScores();
   };
 
   window.adjustPoints = async function(playerId) {
@@ -475,51 +454,6 @@ window.switchPage = function(page) {
 
   init();
 })();
-async function loadPlayersForAdmin() {
-    if (!isAdmin) return;
-
-    const { data: players, error } = await supabase
-        .from('profiles')
-        .select('id, display_name, role')
-        .order('display_name');
-
-    if (error) {
-        alert(error.message);
-        return;
-    }
-
-    const container = document.getElementById('adminPlayersList');
-
-    container.innerHTML = players
-        .filter(p => p.role !== 'admin')
-        .map(p => `
-            <div class="admin-player">
-                <span>${escapeHtml(p.display_name)}</span>
-                <button onclick="deletePlayer('${p.id}')">
-                    🗑️ Supprimer
-                </button>
-            </div>
-        `).join('');
-}
-
-async function deletePlayer(playerId) {
-    if (!isAdmin) return;
-
-    if (!confirm('Supprimer définitivement ce joueur ?')) return;
-
-    const { error } = await supabase.rpc(
-        'admin_delete_player',
-        { p_player_id: playerId }
-    );
-
-    if (error) {
-        alert(error.message);
-        return;
-    }
-
-    alert('Joueur supprimé !');
-    await loadPlayersForAdmin();
-}
 </script>
 </body>
 </html>
