@@ -244,7 +244,15 @@ async function register(){
 
  msg("Création du compte...");
 
- const {data,error}=await db.functions.invoke("register-player",{
+const { data, error } = await db.functions.invoke("register-player", {
+  method: "POST",
+  body: {
+    identifier,
+    password,
+    groupId,
+    groupCode
+  }
+});
 
   body:{identifier,password,groupId,groupCode}
 
