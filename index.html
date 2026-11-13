@@ -40,6 +40,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.wrap{w
 <nav class="tabs" id="nav">
 <button class="active" data-page="home" onclick="page('home')">Accueil</button>
 <button data-page="groups" onclick="page('groups')">Mon groupe</button>
+<button data-page="ranking" onclick="page('ranking')">Classement</button>
 <button data-page="announcements" onclick="page('announcements')">Annonces</button>
 <button data-page="rules" onclick="page('rules')">Règlement</button>
 <button data-page="admin" id="adminNav" class="hidden" onclick="page('admin')">Administration</button>
@@ -49,6 +50,7 @@ button,input,textarea,select{font:inherit}button{cursor:pointer;border:0}.wrap{w
 <div class="panel section"><h2>Bienvenue dans la classe</h2><p class="muted">Respecte le règlement, protège tes informations et fais évoluer ton groupe.</p></div>
 </section>
 <section id="groupsPage" class="section hidden"><div class="panel"><h2>Mon groupe</h2><p class="muted">Tu peux consulter les membres de ton groupe. Les points des autres joueurs restent masqués sauf déblocage.</p><div id="myMembers"></div><div class="topline"></div><button class="btn primary" onclick="unlockScores()">Débloquer les points du groupe — 10 points</button><div id="groupScores"></div></div></section>
+<section id="rankingPage" class="section hidden"><div class="panel"><h2>Classement général</h2><p class="muted">Les joueurs sont classés selon leurs points. Les scores restent confidentiels : seul le rang et le nom sont affichés.</p><div id="rankingList"></div></div></section>
 <section id="announcementsPage" class="section hidden"><div class="panel"><h2>Annonces</h2><div id="announcementsList"></div></div></section>
 <section id="rulesPage" class="section hidden"><div class="panel"><h2>Règlement officiel</h2><div id="rulesList"></div></div></section>
 <section id="adminPage" class="section hidden">
@@ -79,7 +81,12 @@ async function register(){hideMsg("authMsg");const identifier=$("regName").value
 async function logout(){await sb.auth.signOut();user=null;profile=null;$("appView").classList.add("hidden");$("authView").classList.remove("hidden")}
 async function boot(u){user=u;const {data,error}=await sb.from("profiles").select("id,display_name,group_id,role,points").eq("id",u.id).maybeSingle();if(error||!data){msg("authMsg",error?.message||"Profil introuvable.",true);return}profile=data;isAdmin=data.role==="admin";$("authView").classList.add("hidden");$("appView").classList.remove("hidden");$("adminNav").classList.toggle("hidden",!isAdmin);$("welcome").textContent="Bienvenue, "+data.display_name;$("myPoints").textContent=data.points??100;$("myGroup").textContent=groupName(data.group_id);await refreshAll()}
 async function refreshAll(){await Promise.all([loadMembers(),loadRules(),loadAnnouncements()]);if(isAdmin){await loadAdmin()}}
-function page(name){["home","groups","announcements","rules","admin"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==name));document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="admin"&&isAdmin)loadAdmin()}
+function page(name){["home","groups","ranking","announcements","rules","admin"].forEach(p=>$(p+"Page").classList.toggle("hidden",p!==name));document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===name));if(name==="admin"&&isAdmin)loadAdmin();if(name==="ranking")loadRanking()}
+async function loadRanking(){
+ const {data,error}=await sb.rpc("get_public_ranking");
+ if(error){$("rankingList").innerHTML='<div class="notice error">Classement indisponible : '+esc(error.message)+'</div>';return}
+ $("rankingList").innerHTML=(data||[]).map((p,i)=>`<div class="member"><span><b>#${p.position||i+1}</b> · ${esc(p.player_name)}</span><span class="pill">Classé</span></div>`).join("")||'<div class="empty">Aucun joueur classé.</div>';
+}
 async function loadMembers(){const {data,error}=await sb.from("profiles").select("id,display_name,role").eq("group_id",profile.group_id).order("display_name");if(error){$("myMembers").innerHTML='<p class="muted">Impossible de charger les membres.</p>';return}$("myMembers").innerHTML=data.map(p=>`<div class="member"><span>${esc(p.display_name)} ${p.id===user.id?'<span class="pill">Toi</span>':""}</span><span class="pill">${p.role==="admin"?"Admin":"Joueur"}</span></div>`).join("")||'<div class="empty">Aucun membre.</div>'}
 async function unlockScores(){const {data,error}=await sb.rpc("unlock_group_scores");if(error)return msg("globalMsg",error.message,true);const {data:rows,error:e}=await sb.rpc("get_group_scores");if(e)return msg("globalMsg",e.message,true);$("groupScores").innerHTML=(rows||[]).map(x=>`<div class="member"><span>${esc(x.player_name)}</span><b>${esc(x.player_points)} pts</b></div>`).join("")||'<div class="empty">Aucun score disponible.</div>';msg("globalMsg","Scores du groupe débloqués.")}
 async function loadRules(){const {data,error}=await sb.from("game_rules").select("rule_number,content").order("rule_number");if(error){$("rulesList").innerHTML='<div class="notice error">Erreur de chargement des règles : '+esc(error.message)+'</div>';return}allRules=data||[];$("rulesList").innerHTML=allRules.map(r=>`<div class="rule"><span class="rule-num">القانون ${String(r.rule_number).padStart(2,"0")}</span><div class="arabic">${esc(r.content)}</div></div>`).join("")||'<div class="empty">Aucune règle enregistrée.</div>'}
