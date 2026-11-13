@@ -1,440 +1,68 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#09090d">
-  <title>THE CLASSROOM OF THE ELITE</title>
-  <style>
-    :root{--bg:#09090d;--panel:#121219;--panel2:#191923;--red:#d62839;--red2:#ff4055;--text:#f5f5f7;--muted:#a4a4b3;--line:#2b2b38;--green:#51d69a}
-    *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#241018 0%,#0b0b10 48%,#07070a 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
-    .wrap{width:min(1050px,92%);margin:0 auto;padding:28px 0 60px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:28px}
-    .brand{font-weight:900;letter-spacing:.12em;font-size:clamp(17px,3vw,25px)}
-    .brand span{color:var(--red2)}
-    .tag{color:var(--muted);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
-    .panel{background:linear-gradient(145deg,rgba(25,25,35,.97),rgba(14,14,20,.97));border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 18px 55px #0007;animation:rise .35s ease both}
-    @keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
-    h1,h2,h3{margin:0 0 14px}h1{font-size:clamp(25px,5vw,38px);line-height:1.12}h2{font-size:22px}h3{font-size:16px}
-    p{color:var(--muted);line-height:1.6}
-    .accent{color:var(--red2)}.muted{color:var(--muted)}.small{font-size:12px}
-    .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-    .stack{display:grid;gap:12px}
-    label{display:block;color:#d8d8e0;font-size:13px;margin:0 0 7px}
-    input,select{width:100%;background:#0c0c12;border:1px solid #353542;color:var(--text);border-radius:10px;padding:13px 14px;font-size:15px;outline:none}
-    input:focus,select:focus{border-color:var(--red2);box-shadow:0 0 0 3px #d6283928}
-    button{border:0;border-radius:10px;padding:13px 16px;background:var(--red);color:white;font-weight:750;font-size:14px;cursor:pointer;transition:transform .15s,background .15s,opacity .15s}
-    button:hover{background:var(--red2);transform:translateY(-1px)}button:disabled{opacity:.5;cursor:wait;transform:none}
-    button.secondary{background:#292936;border:1px solid #414151}button.secondary:hover{background:#383847}
-    button.ghost{background:transparent;border:1px solid var(--line);color:#eee}
-    .tabs{display:flex;gap:8px;margin-bottom:20px}.tabs button{flex:1}
-    .hidden{display:none!important}
-    .message{margin-top:12px;padding:11px 13px;border-radius:10px;background:#29202a;border:1px solid #63313d;color:#ffdce1;font-size:13px;white-space:pre-wrap}
-    .message.ok{background:#14251f;border-color:#245b45;color:#c9ffe6}
-    .topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-    .stat{background:#0c0c12;border:1px solid var(--line);border-radius:14px;padding:17px}
-    .stat strong{display:block;font-size:28px;margin-top:5px}
-    .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
-    table{width:100%;border-collapse:collapse;min-width:460px;background:#0d0d13}
-    th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);font-size:13px}
-    th{color:#bdbdca;background:#171720;font-weight:700}
-    tr:last-child td{border-bottom:0}
-    .rank{color:var(--red2);font-weight:900}
-    .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .actions input{max-width:110px}
-    .section{margin-top:18px}
-    .playername{font-weight:800;font-size:18px}
-    .rule{height:1px;background:var(--line);margin:20px 0}
-    footer{text-align:center;color:#777785;font-size:11px;margin-top:22px;letter-spacing:.08em}
-    @media(max-width:680px){.grid{grid-template-columns:1fr}.panel{padding:18px}.wrap{width:94%;padding-top:18px}header{align-items:flex-start;flex-direction:column}.tabs{flex-direction:column}}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#09090d">
+<title>THE CLASSROOM OF THE ELITE</title>
+<style>
+:root{--bg:#09090d;--panel:#13131b;--panel2:#1a1a24;--line:#292936;--red:#b51f35;--red2:#e13b50;--text:#f5f5f7;--muted:#a3a3b2;--gold:#d9b76e}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0,#291018 0,transparent 35%),var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 15px;background:var(--red);color:white;font-weight:700}button:disabled{opacity:.5;cursor:not-allowed}.secondary{background:#292936}.danger{background:#762031}.wrap{max-width:1100px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0 18px}.brand{font-weight:900;letter-spacing:2px}.brand span{color:var(--red2)}.hero{height:clamp(180px,34vw,350px);border-radius:18px;overflow:hidden;position:relative;background:#171720 url('https://you-zitsu.com/assets/news/vis-s4t1.webp') center 35%/cover no-repeat;border:1px solid #49303a;box-shadow:0 18px 50px #0008}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#09090de8,#09090d40 70%,#09090d22)}.heroText{position:absolute;z-index:1;left:24px;bottom:22px;max-width:520px}.heroText small{color:#f0b9c1;letter-spacing:3px}.heroText h1{font-size:clamp(24px,5vw,46px);line-height:1.05;margin:8px 0}.heroText p{color:#e3dce0;margin:0}.nav{display:flex;gap:8px;overflow:auto;padding:16px 0;position:sticky;top:0;background:#09090df0;z-index:5}.nav button{white-space:nowrap;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}.nav button.active{background:var(--red);border-color:var(--red);color:white}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}.card{background:linear-gradient(145deg,var(--panel),#101017);border:1px solid var(--line);border-radius:16px;padding:18px;margin:0 0 14px}.muted{color:var(--muted)}.eyebrow{font-size:12px;letter-spacing:2px;color:var(--muted);text-transform:uppercase}.points{font-size:42px;font-weight:900;color:var(--gold);line-height:1.15;margin:8px 0}.sectionTitle{font-size:23px;margin:12px 0 16px}.field{display:grid;gap:6px;margin:10px 0}.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#0d0d14;color:white}.field textarea{min-height:90px;resize:vertical}.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.hide{display:none!important}.msg{padding:10px 12px;border-radius:10px;margin:10px 0;background:#27202a;color:#ffd9df}.good{background:#14271e;color:#b9f2ce}.item{padding:13px 0;border-bottom:1px solid var(--line)}.item:last-child{border:0}.rank{color:var(--gold);font-weight:800;min-width:35px}.table{width:100%;border-collapse:collapse}.table th,.table td{text-align:left;padding:10px;border-bottom:1px solid var(--line)}.table th{color:var(--muted);font-size:12px;text-transform:uppercase}.pill{display:inline-block;padding:3px 9px;border-radius:20px;background:#30202a;color:#ffc1cb;font-size:12px}.announcement{border-left:3px solid var(--red2);padding:12px 14px;background:#17131a;border-radius:0 12px 12px 0;margin:10px 0}.announcement h3{margin:0 0 5px}.announcement p{margin:0;white-space:pre-wrap}.small{font-size:12px}.center{text-align:center}.footer{padding:25px 0;color:#686875;text-align:center;font-size:12px}
+@media(max-width:600px){.wrap{padding:12px}.heroText{left:16px;bottom:16px}.nav{margin:0 -12px;padding:12px}.top{align-items:flex-start}.table{font-size:13px}.table th,.table td{padding:8px 5px}}
+</style>
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div>
-      <div class="brand">THE <span>CLASSROOM</span> OF THE ELITE</div>
-      <div class="tag">Knowledge · Strategy · Merit</div>
-    </div>
-    <div id="headerActions" class="actions hidden"><span id="whoami" class="small muted"></span><button class="secondary" onclick="logout()">Déconnexion</button></div>
-  </header>
-
-  <main id="authView" class="panel">
-    <div class="tag">Bienvenue</div>
-    <h1>Gagne ta place.<br><span class="accent">Prouve ta valeur.</span></h1>
-    <p>Connecte-toi ou crée ton compte pour rejoindre ta classe.</p>
-    <div class="tabs">
-      <button id="loginTab" onclick="showAuthTab('login')">Connexion</button>
-      <button id="registerTab" class="secondary" onclick="showAuthTab('register')">Créer un compte</button>
-    </div>
-    <section id="loginForm" class="stack">
-      <div><label for="loginId">Email ou pseudo</label><input id="loginId" autocomplete="username" placeholder="Ton email ou pseudo"></div>
-      <div><label for="loginPass">Mot de passe</label><input id="loginPass" type="password" autocomplete="current-password" placeholder="Mot de passe"></div>
-      <button id="loginBtn" onclick="login()">Se connecter</button>
-    </section>
-    <section id="registerForm" class="stack hidden">
-      <div><label for="regId">Email ou pseudo (3 à 20 caractères pour un pseudo)</label><input id="regId" autocomplete="username" placeholder="Email ou pseudo"></div>
-      <div><label for="regPass">Mot de passe (6 caractères minimum)</label><input id="regPass" type="password" autocomplete="new-password" placeholder="Mot de passe"></div>
-      <div><label for="regGroup">Choisir un groupe</label><select id="regGroup"><option value="">Sélectionner un groupe</option><option value="07392c93-b88e-4eda-b92c-b593c8075465">Group A</option><option value="48cb0b9c-ecaf-4611-9c47-3da5c96487e8">Group B</option><option value="6cb85a0a-b4aa-4adf-aa0d-91530a55f66f">Group C</option><option value="a6ef7a23-a04b-46cf-acde-a1fd58d01ed6">Group D</option></select></div>
-      <div><label for="regCode">Code secret du groupe</label><input id="regCode" type="password" autocomplete="off" placeholder="Code secret"></div>
-      <button id="registerBtn" onclick="register()">Créer mon compte</button>
-    </section>
-    <div id="authMessage" class="message hidden" role="status"></div>
-    <p class="small">Chaque nouveau joueur commence avec 100 points. Aucun plafond de points.</p>
-  </main>
-
-  <main id="appView" class="hidden">
-    <section class="panel">
-      <div class="topline">
-        <div><div class="tag">Espace joueur</div><div class="playername" id="playerName">Joueur</div><div class="muted small" id="playerGroup">Groupe</div></div>
-        <div class="stat"><span class="muted small">TES POINTS</span><strong id="myPoints">—</strong></div>
-      </div>
-      <div class="grid">
-        <div class="stat"><span class="muted small">CLASSEMENT</span><strong id="myRank">—</strong></div>
-        <div class="stat"><span class="muted small">GROUPE</span><strong id="myGroupShort">—</strong></div>
-      </div>
-      <div class="section">
-        <h2>Classement général</h2>
-        <p class="small">Le classement affiche les noms et les groupes, sans révéler les points des autres joueurs.</p>
-        <div id="leaderboard" class="tablewrap"></div>
-      </div>
-      <div class="section">
-        <h2>Scores de ton groupe</h2>
-        <p class="small">Débloque une fois les scores de ton groupe pour 10 points.</p>
-        <button id="unlockBtn" onclick="unlockScores()">Débloquer les scores — 10 points</button>
-        <div id="groupScores" class="section"></div>
-      </div>
-    </section>
-
-    <section id="adminPanel" class="panel section hidden">
-      <div class="topline"><div><div class="tag">Contrôle réservé</div><h2>Administration</h2></div><span class="accent small">ADMIN</span></div>
-      <div class="actions"><button onclick="loadAdmin()">Actualiser les joueurs</button><button class="secondary" onclick="resetAllPoints()">Réinitialiser tous les points à 100</button></div>
-      <p class="small">La réinitialisation concerne tous les joueurs et demande une confirmation.</p>
-      <div id="adminMessage" class="message hidden"></div>
-      <div id="adminPlayers" class="tablewrap section"></div>
-    </section>
-  </main>
-  <footer>THE CLASSROOM OF THE ELITE · OFFICIAL CLASS PORTAL</footer>
+<header class="top"><div class="brand">THE <span>CLASSROOM</span> OF THE ELITE</div><div id="authStatus" class="muted small">Non connecté</div></header>
+<section class="hero"><div class="heroText"><small>MERITOCRACY • STRATEGY • CLASS D</small><h1>THE CLASSROOM<br>OF THE ELITE</h1><p>Chaque point compte. Chaque décision a un prix.</p></div></section>
+<nav class="nav" id="nav">
+<button class="active" data-tab="home">Accueil</button><button data-tab="leaderboard">Classement</button><button data-tab="group">Mon groupe</button><button data-tab="profile">Mon profil</button><button data-tab="admin" id="adminTab" class="hide">Administration</button><button data-tab="account" id="accountTab">Connexion</button>
+</nav>
+<div id="notice" class="msg hide" role="status"></div>
+<main>
+<section id="page-home">
+<h2 class="sectionTitle">Accueil</h2>
+<div class="grid"><div class="card"><div class="eyebrow">Mes points</div><div class="points" id="homePoints">—</div><div class="muted" id="homeIdentity">Connecte-toi pour voir ton solde.</div></div><div class="card"><div class="eyebrow">Mon groupe</div><h2 id="homeGroup">—</h2><div class="muted">Ton parcours commence ici.</div></div></div>
+<h2 class="sectionTitle">Activités du jour</h2><div id="announcements"><div class="card muted">Connecte-toi pour consulter les annonces.</div></div>
+</section>
+<section id="page-leaderboard" class="hide"><h2 class="sectionTitle">Classement général</h2><div class="card"><p class="muted small">Le classement affiche les rangs, les noms et les groupes, jamais les points des autres joueurs.</p><div id="leaderboardList" class="muted">Connecte-toi pour charger le classement.</div></div></section>
+<section id="page-group" class="hide"><h2 class="sectionTitle">Mon groupe</h2><div class="card"><p class="muted">Débloque les points de ton groupe pour 10 points. Le déblocage est effectué une seule fois.</p><button id="unlockBtn" onclick="unlockScores()">Débloquer pour 10 points</button><div id="groupScores" class="muted" style="margin-top:12px"></div></div></section>
+<section id="page-profile" class="hide"><h2 class="sectionTitle">Mon profil</h2><div class="card" id="profileInfo">Connecte-toi pour afficher ton profil.</div></section>
+<section id="page-account" class="hide"><h2 class="sectionTitle">Compte joueur</h2><div class="grid"><div class="card"><h3>Connexion</h3><div class="field"><label for="loginId">Email ou pseudo</label><input id="loginId" autocomplete="username"></div><div class="field"><label for="loginPass">Mot de passe</label><input id="loginPass" type="password" autocomplete="current-password"></div><button onclick="login()">Se connecter</button></div><div class="card"><h3>Créer un compte</h3><div class="field"><label for="regId">Email ou pseudo (3 à 20 caractères pour un pseudo)</label><input id="regId" autocomplete="username"></div><div class="field"><label for="regPass">Mot de passe (6 caractères minimum)</label><input id="regPass" type="password" autocomplete="new-password"></div><div class="field"><label for="regGroup">Groupe</label><select id="regGroup"><option value="">Chargement des groupes…</option></select></div><div class="field"><label for="regCode">Code secret du groupe</label><input id="regCode" type="password"></div><button id="registerBtn" onclick="register()">Créer un compte</button></div></div><button class="secondary hide" id="logoutBtn" onclick="logout()">Se déconnecter</button></section>
+<section id="page-admin" class="hide"><h2 class="sectionTitle">Administration</h2><div class="card"><h3>Publier une annonce</h3><div class="field"><label for="announcementTitle">Titre</label><input id="announcementTitle" maxlength="90"></div><div class="field"><label for="announcementBody">Description</label><textarea id="announcementBody" maxlength="1500"></textarea></div><button onclick="publishAnnouncement()">Publier l'annonce</button><p class="muted small">Les annonces ne donnent pas automatiquement de points. L'attribution des points se fait séparément.</p><div id="adminAnnouncementList"></div></div><div class="card"><h3>Gestion des joueurs</h3><div id="playersList" class="muted">Chargement…</div></div><div class="card"><h3>Réinitialiser les points</h3><p class="muted">Tous les joueurs repasseront à 100 points.</p><button class="danger" onclick="resetPoints()">Réinitialiser tous les points</button></div></section>
+</main><div class="footer">THE CLASSROOM OF THE ELITE • Système de mérite</div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-(() => {
-  "use strict";
-
-  const SUPABASE_URL = "https://spvdgioumjjjxumanble.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
-  const GROUPS = {
-    "07392c93-b88e-4eda-b92c-b593c8075465": "Group A",
-    "48cb0b9c-ecaf-4611-9c47-3da5c96487e8": "Group B",
-    "6cb85a0a-b4aa-4adf-aa0d-91530a55f66f": "Group C",
-    "a6ef7a23-a04b-46cf-acde-a1fd58d01ed6": "Group D"
-  };
-
-  const $ = (id) => document.getElementById(id);
-  let sb = null;
-  let currentUser = null;
-  let profile = null;
-  let unlocked = false;
-
-  function showMessage(id, message, success=false) {
-    const el = $(id);
-    el.textContent = message;
-    el.classList.remove("hidden", "ok");
-    if (success) el.classList.add("ok");
-  }
-  function clearMessage(id) {
-    const el = $(id);
-    el.textContent = "";
-    el.classList.add("hidden");
-    el.classList.remove("ok");
-  }
-  function groupName(id) { return GROUPS[id] || "Groupe inconnu"; }
-  function authEmail(identifier) {
-    const value = identifier.trim().toLowerCase();
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
-      ? value
-      : value + "@classroom-of-the-elite.invalid";
-  }
-  function setBusy(id, busy, label) {
-    const b = $(id);
-    if (!b) return;
-    b.disabled = busy;
-    if (label) {
-      if (busy) { b.dataset.oldLabel = b.textContent; b.textContent = label; }
-      else if (b.dataset.oldLabel) { b.textContent = b.dataset.oldLabel; delete b.dataset.oldLabel; }
-    }
-  }
-
-  window.showAuthTab = function(tab) {
-    const loginMode = tab === "login";
-    $("loginForm").classList.toggle("hidden", !loginMode);
-    $("registerForm").classList.toggle("hidden", loginMode);
-    $("loginTab").classList.toggle("secondary", !loginMode);
-    $("registerTab").classList.toggle("secondary", loginMode);
-    clearMessage("authMessage");
-  };
-
-  async function getFunctionError(error) {
-    let detail = error?.message || "Erreur inconnue.";
-    try {
-      const response = error?.context;
-      if (response && typeof response.clone === "function") {
-        const body = await response.clone().json();
-        if (body?.error) detail = body.error;
-      }
-    } catch (_) {}
-    return detail;
-  }
-
-  window.register = async function() {
-    clearMessage("authMessage");
-    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
-
-    const identifier = $("regId").value.trim();
-    const password = $("regPass").value;
-    const groupId = $("regGroup").value;
-    const groupCode = $("regCode").value.trim();
-
-    if (!identifier || !password || !groupId || !groupCode) {
-      showMessage("authMessage", "Remplis tous les champs."); return;
-    }
-    if (password.length < 6) {
-      showMessage("authMessage", "Le mot de passe doit contenir au moins 6 caractères."); return;
-    }
-
-    setBusy("registerBtn", true, "Création en cours…");
-    try {
-      const { data, error } = await sb.functions.invoke("register-player", {
-        body: { identifier, password, groupId, groupCode }
-      });
-      if (error) {
-        showMessage("authMessage", "Erreur : " + await getFunctionError(error));
-        return;
-      }
-      if (data?.error || !data?.success) {
-        showMessage("authMessage", "Erreur : " + (data?.error || "Réponse inattendue du serveur."));
-        return;
-      }
-
-      const { error: loginError } = await sb.auth.signInWithPassword({
-        email: authEmail(identifier),
-        password
-      });
-      if (loginError) {
-        showMessage("authMessage", "Compte créé ! Connecte-toi maintenant avec tes identifiants.", true);
-        window.showAuthTab("login");
-        $("loginId").value = identifier;
-        return;
-      }
-      await enterApp();
-    } catch (e) {
-      showMessage("authMessage", "Erreur : " + (e?.message || "Impossible de créer le compte."));
-    } finally {
-      setBusy("registerBtn", false);
-    }
-  };
-
-  window.login = async function() {
-    clearMessage("authMessage");
-    if (!sb) { showMessage("authMessage", "Connexion Supabase indisponible. Recharge la page."); return; }
-    const identifier = $("loginId").value.trim();
-    const password = $("loginPass").value;
-    if (!identifier || !password) { showMessage("authMessage", "Entre ton identifiant et ton mot de passe."); return; }
-
-    setBusy("loginBtn", true, "Connexion…");
-    try {
-      const { error } = await sb.auth.signInWithPassword({
-        email: authEmail(identifier),
-        password
-      });
-      if (error) { showMessage("authMessage", "Connexion impossible : " + error.message); return; }
-      await enterApp();
-    } catch (e) {
-      showMessage("authMessage", "Erreur : " + (e?.message || "Connexion impossible."));
-    } finally {
-      setBusy("loginBtn", false);
-    }
-  };
-
-  window.logout = async function() {
-    if (sb) await sb.auth.signOut();
-    currentUser = null; profile = null;
-    $("appView").classList.add("hidden");
-    $("authView").classList.remove("hidden");
-    $("headerActions").classList.add("hidden");
-    clearMessage("authMessage");
-    window.showAuthTab("login");
-  };
-
-  async function enterApp() {
-    const { data: userData } = await sb.auth.getUser();
-    currentUser = userData?.user || null;
-    if (!currentUser) { window.logout(); return; }
-
-    const { data, error } = await sb.from("profiles")
-      .select("id, display_name, group_id, role, points")
-      .eq("id", currentUser.id)
-      .single();
-
-    if (error || !data) {
-      showMessage("authMessage", "Connexion réussie, mais profil introuvable : " + (error?.message || ""));
-      await sb.auth.signOut();
-      return;
-    }
-    profile = data;
-    $("authView").classList.add("hidden");
-    $("appView").classList.remove("hidden");
-    $("headerActions").classList.remove("hidden");
-    $("whoami").textContent = profile.display_name;
-    $("playerName").textContent = profile.display_name;
-    $("playerGroup").textContent = groupName(profile.group_id);
-    $("myGroupShort").textContent = groupName(profile.group_id);
-    $("myPoints").textContent = Number(profile.points).toLocaleString("fr-FR");
-    $("adminPanel").classList.toggle("hidden", profile.role !== "admin");
-    await refreshDashboard();
-  }
-
-  async function refreshProfile() {
-    const { data, error } = await sb.from("profiles")
-      .select("id, display_name, group_id, role, points")
-      .eq("id", currentUser.id).single();
-    if (error) throw error;
-    profile = data;
-    $("myPoints").textContent = Number(profile.points).toLocaleString("fr-FR");
-  }
-
-  async function refreshDashboard() {
-    await refreshProfile();
-    await loadLeaderboard();
-    await loadGroupScores();
-    if (profile.role === "admin") await loadAdmin();
-  }
-
-  async function loadLeaderboard() {
-    const { data, error } = await sb.rpc("get_leaderboard");
-    if (error) {
-      $("leaderboard").innerHTML = '<div class="message">Impossible de charger le classement : ' + escapeHtml(error.message) + '</div>';
-      return;
-    }
-    const rows = Array.isArray(data) ? data : [];
-    const myRow = rows.find(r => r.player_name === profile.display_name);
-    $("myRank").textContent = myRow ? "#" + myRow.player_rank : "—";
-    if (!rows.length) {
-      $("leaderboard").innerHTML = '<p class="muted">Aucun joueur classé pour le moment.</p>';
-      return;
-    }
-    $("leaderboard").innerHTML = '<table><thead><tr><th>Rang</th><th>Joueur</th><th>Groupe</th></tr></thead><tbody>' +
-      rows.map(r => '<tr><td class="rank">#' + escapeHtml(r.player_rank) + '</td><td>' + escapeHtml(r.player_name) + '</td><td>' + escapeHtml(r.group_name) + '</td></tr>').join("") +
-      '</tbody></table>';
-  }
-
-  async function loadGroupScores() {
-    const { data, error } = await sb.rpc("get_group_scores");
-    if (error) {
-      $("groupScores").innerHTML = '<div class="message">Scores indisponibles : ' + escapeHtml(error.message) + '</div>';
-      return;
-    }
-    const rows = Array.isArray(data) ? data : [];
-    if (!rows.length) {
-      $("groupScores").innerHTML = '<p class="muted small">Les scores sont verrouillés. Utilise le bouton ci-dessus pour les débloquer.</p>';
-      return;
-    }
-    $("unlockBtn").classList.add("hidden");
-    $("groupScores").innerHTML = '<div class="tablewrap"><table><thead><tr><th>Joueur</th><th>Points</th></tr></thead><tbody>' +
-      rows.map(r => '<tr><td>' + escapeHtml(r.player_name) + '</td><td><strong>' + Number(r.player_points).toLocaleString("fr-FR") + '</strong></td></tr>').join("") +
-      '</tbody></table></div>';
-  }
-
-  window.unlockScores = async function() {
-    const b = $("unlockBtn");
-    b.disabled = true;
-    b.textContent = "Déblocage…";
-    try {
-      const { data, error } = await sb.rpc("unlock_group_scores");
-      if (error) { showMessage("authMessage", "Déblocage impossible : " + error.message); return; }
-      if (data !== true) { showMessage("authMessage", "Tu n'as peut-être pas assez de points ou les scores sont déjà débloqués."); return; }
-      await refreshDashboard();
-      showMessage("authMessage", "Scores de ton groupe débloqués !", true);
-    } catch (e) {
-      showMessage("authMessage", "Erreur : " + (e?.message || "Déblocage impossible."));
-    } finally {
-      b.disabled = false;
-      b.textContent = "Débloquer les scores — 10 points";
-    }
-  };
-
-  window.loadAdmin = async function() {
-    if (!profile || profile.role !== "admin") return;
-    const { data, error } = await sb.from("profiles")
-      .select("id, display_name, group_id, role, points")
-      .order("points", { ascending: false });
-    if (error) {
-      $("adminPlayers").innerHTML = '<div class="message">Erreur : ' + escapeHtml(error.message) + '</div>';
-      return;
-    }
-    const rows = Array.isArray(data) ? data : [];
-    $("adminPlayers").innerHTML = '<table><thead><tr><th>Joueur</th><th>Groupe</th><th>Points</th><th>Modifier</th></tr></thead><tbody>' +
-      rows.map(r => '<tr><td>' + escapeHtml(r.display_name) + (r.role === "admin" ? ' <span class="accent">(admin)</span>' : '') +
-      '</td><td>' + escapeHtml(groupName(r.group_id)) + '</td><td>' + Number(r.points).toLocaleString("fr-FR") +
-      '</td><td><div class="actions"><input type="number" id="delta-' + escapeHtml(r.id) + '" placeholder="+/-" aria-label="Variation des points"><button class="secondary" onclick="adjustPoints(\'' + escapeHtml(r.id) + '\')">Appliquer</button></div></td></tr>').join("") +
-      '</tbody></table>';
-  };
-
-  window.adjustPoints = async function(playerId) {
-    if (!profile || profile.role !== "admin") return;
-    const input = $("delta-" + playerId);
-    const delta = Number(input?.value);
-    if (!Number.isSafeInteger(delta) || delta === 0) {
-      showAdminMessage("Entre un nombre entier différent de zéro."); return;
-    }
-    const { error } = await sb.rpc("admin_adjust_points", {
-      p_player_id: playerId,
-      p_delta: delta
-    });
-    if (error) { showAdminMessage("Modification refusée : " + error.message); return; }
-    showAdminMessage("Points mis à jour.", true);
-    await refreshProfile();
-    await loadAdmin();
-    await loadLeaderboard();
-  };
-
-  window.resetAllPoints = async function() {
-    if (!profile || profile.role !== "admin") return;
-    const confirmed = confirm("Confirmer la réinitialisation ? Tous les joueurs retrouveront 100 points.");
-    if (!confirmed) return;
-    const { error } = await sb.rpc("admin_reset_points");
-    if (error) { showAdminMessage("Réinitialisation refusée : " + error.message); return; }
-    showAdminMessage("Tous les joueurs ont maintenant 100 points.", true);
-    await refreshDashboard();
-  };
-
-  function showAdminMessage(message, success=false) {
-    showMessage("adminMessage", message, success);
-  }
-  function escapeHtml(value) {
-    return String(value ?? "").replace(/[&<>"']/g, c => ({
-      "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-    }[c]));
-  }
-
-  async function init() {
-    if (!window.supabase || typeof window.supabase.createClient !== "function") {
-      showMessage("authMessage", "La bibliothèque Supabase ne s'est pas chargée. Vérifie ta connexion puis recharge.");
-      return;
-    }
-    try {
-      sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      const { data } = await sb.auth.getSession();
-      if (data?.session) await enterApp();
-    } catch (e) {
-      showMessage("authMessage", "Initialisation impossible : " + (e?.message || "Erreur inconnue."));
-    }
-  }
-
-  init();
-})();
+const SUPABASE_URL="https://spvdgioumjjjxumanble.supabase.co";
+const SUPABASE_KEY="sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
+const REGISTER_FUNCTION_URL=SUPABASE_URL+"/functions/v1/register-player";
+let db=null,currentUser=null,currentProfile=null,groups=[];
+const $=id=>document.getElementById(id);
+function notice(t,good=false){const n=$("notice");n.textContent=t;n.classList.remove("hide","good");if(good)n.classList.add("good");window.scrollTo({top:0,behavior:"smooth"});}
+function clearNotice(){$("notice").classList.add("hide");}
+function tab(name){document.querySelectorAll("main>section").forEach(s=>s.classList.add("hide"));$("page-"+name).classList.remove("hide");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===name));if(name==="leaderboard")loadLeaderboard();if(name==="group")loadGroupScores();if(name==="admin"&&currentProfile?.role==="admin")loadAdmin();}
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>tab(b.dataset.tab)));
+function validConfig(){if(!db){notice("Connexion à la base de données impossible. Vérifie la connexion internet.");return false;}return true;}
+async function loadGroups(){const {data,error}=await db.from("groups").select("id,name").order("name");if(error){$("regGroup").innerHTML='<option value="">Groupes indisponibles</option>';return;}groups=data||[];$("regGroup").innerHTML='<option value="">Choisir un groupe</option>'+groups.map(g=>`<option value="${g.id}">${escapeHtml(g.name)}</option>`).join("");}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function authEmail(v){v=v.trim().toLowerCase();return v.includes("@")?v:v+"@classroom-of-the-elite.invalid";}
+async function register(){clearNotice();if(!validConfig())return;const identifier=$("regId").value.trim(),password=$("regPass").value,groupId=$("regGroup").value,groupCode=$("regCode").value.trim();if(!identifier||!password||!groupId||!groupCode){notice("Remplis tous les champs.");return;}const btn=$("registerBtn");btn.disabled=true;try{const r=await fetch(REGISTER_FUNCTION_URL,{method:"POST",headers:{"Content-Type":"application/json","apikey":SUPABASE_KEY,"Authorization":"Bearer "+SUPABASE_KEY},body:JSON.stringify({identifier,password,groupId,groupCode})});let data={};try{data=await r.json();}catch{}if(!r.ok)throw new Error(data.error||"Inscription impossible.");notice("Compte créé ! Connecte-toi maintenant avec tes identifiants.",true);$("loginId").value=identifier;$("loginPass").value=password;}catch(e){notice("Erreur : "+e.message);}finally{btn.disabled=false;}}
+async function login(){clearNotice();if(!validConfig())return;const id=$("loginId").value.trim(),password=$("loginPass").value;if(!id||!password){notice("Entre ton identifiant et ton mot de passe.");return;}const {data,error}=await db.auth.signInWithPassword({email:authEmail(id),password});if(error){notice("Connexion impossible : "+error.message);return;}currentUser=data.user;await refreshProfile();notice("Connexion réussie.",true);tab("home");}
+async function logout(){await db.auth.signOut();currentUser=null;currentProfile=null;renderSession();notice("Déconnexion effectuée.",true);tab("home");}
+async function refreshProfile(){if(!currentUser)return;const {data,error}=await db.from("profiles").select("id,display_name,group_id,role,points").eq("id",currentUser.id).single();if(error){notice("Profil introuvable : "+error.message);return;}currentProfile=data;renderSession();await loadAnnouncements();}
+function renderSession(){const logged=!!currentUser;$("authStatus").textContent=logged?(currentProfile?.display_name||"Connecté"):"Non connecté";$("adminTab").classList.toggle("hide",currentProfile?.role!=="admin");$("logoutBtn").classList.toggle("hide",!logged);$("homePoints").textContent=logged?(Number(currentProfile?.points??0).toLocaleString("fr-FR")+" points"):"—";$("homeIdentity").textContent=logged?currentProfile.display_name:"Connecte-toi pour voir ton solde.";const g=groups.find(x=>x.id===currentProfile?.group_id);$("homeGroup").textContent=g?.name||"—";$("profileInfo").innerHTML=logged?`<p><span class="muted">Pseudo</span><br><b>${escapeHtml(currentProfile.display_name)}</b></p><p><span class="muted">Groupe</span><br><b>${escapeHtml(g?.name||"—")}</b></p><p><span class="muted">Points</span><br><b class="points">${Number(currentProfile.points).toLocaleString("fr-FR")}</b></p><p class="muted small">Connecté avec ${escapeHtml(currentUser.email||"compte joueur")}</p>`:"Connecte-toi pour afficher ton profil.";}
+async function loadLeaderboard(){if(!currentUser){$("leaderboardList").textContent="Connecte-toi pour consulter le classement.";return;}const {data,error}=await db.rpc("get_leaderboard");if(error){$("leaderboardList").textContent="Erreur de chargement : "+error.message;return;}if(!data?.length){$("leaderboardList").textContent="Aucun joueur pour le moment.";return;}$("leaderboardList").innerHTML='<table class="table"><thead><tr><th>Rang</th><th>Joueur</th><th>Groupe</th></tr></thead><tbody>'+data.map(p=>`<tr><td class="rank">#${p.player_rank}</td><td>${escapeHtml(p.player_name)}</td><td><span class="pill">${escapeHtml(p.group_name)}</span></td></tr>`).join("")+'</tbody></table>';}
+async function loadGroupScores(){if(!currentUser){$("groupScores").textContent="Connecte-toi pour continuer.";return;}const {data,error}=await db.rpc("get_group_scores");if(error){$("groupScores").textContent="Les scores sont verrouillés ou indisponibles. "+error.message;return;}if(!data?.length){$("groupScores").textContent="Aucun score à afficher.";return;}$("groupScores").innerHTML=data.map(p=>`<div class="item row"><b>${escapeHtml(p.player_name)}</b><strong>${Number(p.player_points).toLocaleString("fr-FR")} pts</strong></div>`).join("");}
+async function unlockScores(){if(!currentUser){notice("Connecte-toi d'abord.");return;}const {error}=await db.rpc("unlock_group_scores");if(error){notice("Impossible de débloquer : "+error.message);return;}await refreshProfile();await loadGroupScores();notice("Scores du groupe débloqués.",true);}
+async function loadAnnouncements(){const box=$("announcements");const {data,error}=await db.from("daily_announcements").select("id,title,body,created_at").order("created_at",{ascending:false}).limit(20);if(error){box.innerHTML='<div class="card muted">Les annonces seront disponibles après la configuration de la table daily_announcements dans Supabase.</div>';return;}box.innerHTML=data?.length?data.map(a=>`<article class="announcement"><h3>${escapeHtml(a.title)}</h3><p>${escapeHtml(a.body)}</p><div class="muted small">${new Date(a.created_at).toLocaleString("fr-FR")}</div></article>`).join(""):'<div class="card muted">Aucune annonce pour le moment.</div>';}
+async function publishAnnouncement(){if(currentProfile?.role!=="admin")return;const title=$("announcementTitle").value.trim(),body=$("announcementBody").value.trim();if(!title||!body){notice("Entre un titre et une description.");return;}const {error}=await db.from("daily_announcements").insert({title,body,created_by:currentUser.id});if(error){notice("Publication impossible : "+error.message+". La table daily_announcements doit être créée dans Supabase.");return;}$("announcementTitle").value="";$("announcementBody").value="";await loadAnnouncements();notice("Annonce publiée.",true);}
+async function loadAdmin(){if(currentProfile?.role!=="admin")return;const {data,error}=await db.from("profiles").select("id,display_name,group_id,points,role").order("display_name");if(error){$("playersList").textContent="Erreur : "+error.message;return;}const groupName=id=>groups.find(g=>g.id===id)?.name||"—";$("playersList").innerHTML='<div style="overflow:auto"><table class="table"><thead><tr><th>Joueur</th><th>Groupe</th><th>Points</th><th>Ajuster</th></tr></thead><tbody>'+data.filter(p=>p.role!=="admin").map(p=>`<tr><td>${escapeHtml(p.display_name)}</td><td>${escapeHtml(groupName(p.group_id))}</td><td>${Number(p.points)}</td><td><div class="row"><input aria-label="Variation de points pour ${escapeHtml(p.display_name)}" id="delta-${p.id}" type="number" value="10" style="width:75px;min-width:65px;background:#0d0d14;color:white;border:1px solid #444;padding:7px;border-radius:8px"><button onclick="adjustPoints('${p.id}')">Valider</button></div></td></tr>`).join("")+'</tbody></table></div>';}
+async function adjustPoints(id){const delta=Number($("delta-"+id).value);if(!Number.isSafeInteger(delta)||delta===0){notice("Entre une variation entière différente de zéro.");return;}const {error}=await db.rpc("admin_adjust_points",{p_player_id:id,p_delta:delta});if(error){notice("Modification impossible : "+error.message);return;}await loadAdmin();await refreshProfile();notice("Points modifiés.",true);}
+async function resetPoints(){if(currentProfile?.role!=="admin")return;if(!confirm("Confirmer la réinitialisation de TOUS les joueurs à 100 points ?"))return;const {error}=await db.rpc("admin_reset_points");if(error){notice("Réinitialisation impossible : "+error.message);return;}await loadAdmin();await refreshProfile();notice("Tous les joueurs ont maintenant 100 points.",true);}
+async function init(){try{if(!window.supabase){notice("La bibliothèque Supabase n'a pas chargé.");return;}db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);await loadGroups();const {data}=await db.auth.getSession();if(data.session){currentUser=data.session.user;await refreshProfile();}else renderSession();}catch(e){notice("Erreur de démarrage : "+e.message);}}
+window.register=register;window.login=login;window.logout=logout;window.unlockScores=unlockScores;window.publishAnnouncement=publishAnnouncement;window.adjustPoints=adjustPoints;window.resetPoints=resetPoints;
+init();
 </script>
-</body>
-</html>
+</body></html>
