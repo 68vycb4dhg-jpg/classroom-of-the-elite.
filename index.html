@@ -64,7 +64,7 @@ button:active{transform:scale(.98)}
 <div id="annAdmin" class="hidden"><div class="field"><label>Titre</label><input id="annTitle"></div><div class="field"><label>Contenu</label><textarea id="annContent"></textarea></div><button class="btn primary" onclick="addAnnouncement()">Publier</button><div id="adminAnnList"></div></div>
 </section></main><div id="globalMsg" class="notice hidden"></div></div>
 <script>
-const SUPABASE_URL="https://spvdgioumjjjxumanble.supabase.co",KEY="sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
+const URL="https://spvdgioumjjjxumanble.supabase.co",KEY="sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
 let sb=null;
 const GROUPS=[["07392c93-b88e-4eda-b92c-b593c8075465","Groupe A"],["48cb0b9c-ecaf-4611-9c47-3da5c96487e8","Groupe B"],["6cb85a0a-b4aa-4adf-aa0d-91530a55f66f","Groupe C"],["a6ef7a23-a04b-46cf-acde-a1fd58d01ed6","Groupe D"]];
 let user=null,profile=null,isAdmin=false,rules=[],announcements=[];
@@ -94,7 +94,20 @@ async function boot(u){user=u;let {data,error}=await sb.from("profiles").select(
 async function logout(){await sb.auth.signOut();location.reload()}
 function page(id,b){["home","group","ranking","ann","rules","admin"].forEach(x=>$(x).classList.toggle("hidden",x!==id));document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(id==="ranking")loadRanking();if(id==="admin"&&isAdmin)loadAdmin()}
 async function loadMembers(){let box=$("members");box.innerHTML='<div class="empty">Chargement…</div>';let {data,error}=await sb.rpc("get_my_group_members");if(error){box.innerHTML='<div class="notice">Erreur : '+esc(error.message)+'</div>';return}let m=data||[];$("memberCount").textContent=m.length+" membre(s) dans "+gname(profile.group_id);box.innerHTML=m.map(p=>`<div class="member"><span>${esc(p.display_name)} ${p.id===user.id?'<span class="pill">Toi</span>':""}</span><span class="pill">${p.role==="admin"?"Admin":"Joueur"}</span></div>`).join("")||'<div class="empty">Aucun membre.</div>'}
-async function unlockScores(){let r=await sb.rpc("unlock_group_scores");if(r.error)return note("globalMsg",r.error.message,true);let q=await sb.rpc("get_group_scores");if(q.error)return note("globalMsg",q.error.message,true);$("scores").innerHTML=(q.data||[]).map(x=>`<div class="member">${esc(x.player_name)} <b>${esc(x.player_points)} pts</b></div>`).join("")}
+async function unlockScores(){
+if(!sb||!user||!profile)return note("globalMsg","Connecte-toi pour débloquer les points.",true);
+const button=document.querySelector('#group button[onclick="unlockScores()"]');
+if(button){button.disabled=true;button.textContent="Paiement en cours…";}
+$("scores").innerHTML="";
+try{
+const {data,error}=await sb.rpc("pay_and_get_group_scores");
+if(error)return note("globalMsg",error.message,true);
+profile.points=Number(profile.points)-10;
+$("points").textContent=profile.points;
+$("scores").innerHTML=(data||[]).map(x=>`<div class="member">${esc(x.player_name)} <b>${esc(x.player_points)} pts</b></div>`).join("")||'<div class="empty">Aucun score disponible.</div>';
+note("globalMsg","10 points ont été débités. Voici les points de ton groupe.");
+}catch(e){note("globalMsg",e?.message||String(e),true)}finally{if(button){button.disabled=false;button.textContent="Débloquer les points du groupe — 10 points"}}
+}
 async function loadRanking(){let {data,error}=await sb.rpc("get_public_ranking");$("rankingList").innerHTML=error?esc(error.message):(data||[]).map((p,i)=>`<div class="member">#${p.position||i+1} · ${esc(p.player_name)}</div>`).join("")||"Aucun joueur"}
 async function loadRules(){let {data,error}=await sb.from("game_rules").select("rule_number,content").order("rule_number");if(error)return $("rulesList").textContent=error.message;rules=data||[];$("rulesList").innerHTML=rules.map(r=>`<div class="item"><b>القانون ${r.rule_number}</b><span class="arabic">${esc(r.content)}</span></div>`).join("");if(isAdmin)renderRulesEdit()}
 async function loadAnnouncements(){let {data,error}=await sb.from("announcements").select("id,title,content,created_at").order("created_at",{ascending:false});if(error)return $("annList").textContent=error.message;announcements=data||[];$("annList").innerHTML=announcements.map(a=>`<div class="item"><div><b>${esc(a.title)}</b><p>${esc(a.content)}</p></div></div>`).join("")||"Aucune annonce"}
@@ -112,11 +125,7 @@ async function removeRule(n){if(!confirm("Supprimer cette règle ?"))return;let 
 async function addAnnouncement(){let {error}=await sb.from("announcements").insert({title:$("annTitle").value.trim(),content:$("annContent").value.trim(),created_by:user.id});if(error)return note("globalMsg",error.message,true);$("annTitle").value="";$("annContent").value="";await loadAnnouncements()}
 window.supabaseReady.then(() => {
   if (!window.supabase?.createClient) throw new Error('La bibliothèque Supabase est introuvable.');
-  const parsedSupabaseUrl = new window.URL(SUPABASE_URL);
-  if (parsedSupabaseUrl.protocol !== 'https:' || parsedSupabaseUrl.hostname !== 'spvdgioumjjjxumanble.supabase.co') {
-    throw new Error('Adresse du projet Supabase invalide : ' + SUPABASE_URL);
-  }
-  sb = window.supabase.createClient(parsedSupabaseUrl.origin, KEY);
+  sb = window.supabase.createClient(URL, KEY);
   return sb.auth.getSession();
 }).then(({data}) => {
   if (data?.session) boot(data.session.user);
