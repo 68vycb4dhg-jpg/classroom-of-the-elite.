@@ -64,7 +64,7 @@ button:active{transform:scale(.98)}
 <div id="annAdmin" class="hidden"><div class="field"><label>Titre</label><input id="annTitle"></div><div class="field"><label>Contenu</label><textarea id="annContent"></textarea></div><button class="btn primary" onclick="addAnnouncement()">Publier</button><div id="adminAnnList"></div></div>
 </section></main><div id="globalMsg" class="notice hidden"></div></div>
 <script>
-const URL="https://spvdgioumjjjxumanble.supabase.co",KEY="sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
+const SUPABASE_URL="https://spvdgioumjjjxumanble.supabase.co",KEY="sb_publishable_6lLq_ywgyiDptGr8EtPo_A_mgrVFYTB";
 let sb=null;
 const GROUPS=[["07392c93-b88e-4eda-b92c-b593c8075465","Groupe A"],["48cb0b9c-ecaf-4611-9c47-3da5c96487e8","Groupe B"],["6cb85a0a-b4aa-4adf-aa0d-91530a55f66f","Groupe C"],["a6ef7a23-a04b-46cf-acde-a1fd58d01ed6","Groupe D"]];
 let user=null,profile=null,isAdmin=false,rules=[],announcements=[];
@@ -112,7 +112,11 @@ async function removeRule(n){if(!confirm("Supprimer cette règle ?"))return;let 
 async function addAnnouncement(){let {error}=await sb.from("announcements").insert({title:$("annTitle").value.trim(),content:$("annContent").value.trim(),created_by:user.id});if(error)return note("globalMsg",error.message,true);$("annTitle").value="";$("annContent").value="";await loadAnnouncements()}
 window.supabaseReady.then(() => {
   if (!window.supabase?.createClient) throw new Error('La bibliothèque Supabase est introuvable.');
-  sb = window.supabase.createClient(URL, KEY);
+  const parsedSupabaseUrl = new window.URL(SUPABASE_URL);
+  if (parsedSupabaseUrl.protocol !== 'https:' || parsedSupabaseUrl.hostname !== 'spvdgioumjjjxumanble.supabase.co') {
+    throw new Error('Adresse du projet Supabase invalide : ' + SUPABASE_URL);
+  }
+  sb = window.supabase.createClient(parsedSupabaseUrl.origin, KEY);
   return sb.auth.getSession();
 }).then(({data}) => {
   if (data?.session) boot(data.session.user);
