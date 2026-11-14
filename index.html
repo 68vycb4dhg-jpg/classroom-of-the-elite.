@@ -33,7 +33,24 @@ async function signUp(){let identifier=$("regName").value.trim(),password=$("reg
 async function boot(u){user=u;let {data,error}=await sb.from("profiles").select("id,display_name,group_id,role,points").eq("id",u.id).maybeSingle();if(error||!data)return note("authMsg",error?.message||"Profil introuvable",true);profile=data;isAdmin=data.role==="admin";$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("adminTab").classList.toggle("hidden",!isAdmin);$("welcome").textContent="Bienvenue, "+data.display_name;$("points").textContent=data.points??100;$("groupName").textContent=gname(data.group_id);await Promise.all([loadMembers(),loadRules(),loadAnnouncements()]);if(isAdmin)loadAdmin()}
 async function logout(){await sb.auth.signOut();location.reload()}
 function page(id,b){["home","group","ranking","ann","rules","admin"].forEach(x=>$(x).classList.toggle("hidden",x!==id));document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(id==="ranking")loadRanking();if(id==="admin"&&isAdmin)loadAdmin()}
-async function loadMembers(){let box=$("members");box.innerHTML='<div class="empty">Chargement…</div>';let {data,error}=await sb.rpc("get_my_group_members");if(error){box.innerHTML='<div class="notice">Erreur : '+esc(error.message)+'</div>';return}let m=data||[];$("memberCount").textContent=m.length+" membre(s) dans "+gname(profile.group_id);box.innerHTML=m.map(p=>`<div class="member"><span>${esc(p.display_name)} ${p.id===user.id?'<span class="pill">Toi</span>':""}</span><span class="pill">${p.role==="admin"?"Admin":"Joueur"}</span></div>`).join("")||'<div class="empty">Aucun membre.</div>'}
+async function loadMembers(){
+  const box=$("members");
+  box.innerHTML='<div class="empty">Chargement des membres…</div>';
+  // Recharge le groupe depuis Supabase afin d'éviter d'utiliser un ancien group_id
+  // si un administrateur vient de déplacer le joueur.
+  const fresh=await sb.from("profiles").select("group_id").eq("id",user.id).maybeSingle();
+  if(fresh.error){box.innerHTML='<div class="notice">Impossible de vérifier ton groupe : '+esc(fresh.error.message)+'</div>';return}
+  if(fresh.data?.group_id)profile.group_id=fresh.data.group_id;
+  $("groupName").textContent=gname(profile.group_id);
+  const {data,error}=await sb.rpc("get_my_group_members");
+  if(error){box.innerHTML='<div class="notice">Erreur de chargement : '+esc(error.message)+'<br>Vérifie que la fonction SQL get_my_group_members existe et que son accès est accordé aux utilisateurs authentifiés.</div>';return}
+  const members=Array.isArray(data)?data:[];
+  $("memberCount").textContent=members.length+" membre(s) dans "+gname(profile.group_id);
+  box.innerHTML=members.map(p=>`<div class="member"><span>${esc(p.display_name)} ${p.id===user.id?'<span class="pill">Toi</span>':""}</span><span class="pill">${p.role==="admin"?"Admin":"Joueur"}</span></div>`).join("")||'<div class="empty">Aucun membre trouvé dans ce groupe.</div>';
+  if(members.length===1 && members[0].id===user.id){
+    box.innerHTML+='<div class="notice">Ton compte est le seul actuellement rattaché à ce groupe. L’administrateur doit vérifier que les autres joueurs ont bien été affectés au même groupe dans la section « Administration → Groupes & codes ».</div>';
+  }
+}
 async function unlockScores(){let r=await sb.rpc("unlock_group_scores");if(r.error)return note("globalMsg",r.error.message,true);let q=await sb.rpc("get_group_scores");if(q.error)return note("globalMsg",q.error.message,true);$("scores").innerHTML=(q.data||[]).map(x=>`<div class="member">${esc(x.player_name)} <b>${esc(x.player_points)} pts</b></div>`).join("")}
 async function loadRanking(){let {data,error}=await sb.rpc("get_public_ranking");$("rankingList").innerHTML=error?esc(error.message):(data||[]).map((p,i)=>`<div class="member">#${p.position||i+1} · ${esc(p.player_name)}</div>`).join("")||"Aucun joueur"}
 async function loadRules(){let {data,error}=await sb.from("game_rules").select("rule_number,content").order("rule_number");if(error)return $("rulesList").textContent=error.message;rules=data||[];$("rulesList").innerHTML=rules.map(r=>`<div class="item"><b>القانون ${r.rule_number}</b><span class="arabic">${esc(r.content)}</span></div>`).join("");if(isAdmin)renderRulesEdit()}
