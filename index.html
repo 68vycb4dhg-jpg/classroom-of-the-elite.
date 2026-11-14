@@ -1,26 +1,46 @@
 <!doctype html>
-<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100812"><title>Classroom of the Elite</title><script>
-window.supabaseReady = (async () => {
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#100812"><meta name="cote-build" content="2026-11-14-supabase-umd-fix"><title>Classroom of the Elite</title><script>
+/* Charge Supabase avec les fichiers UMD classiques, plus compatibles avec Safari mobile. */
+window.supabaseReady = new Promise((resolve, reject) => {
   const sources = [
-    'https://esm.sh/@supabase/supabase-js@2',
-    'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm',
-    'https://esm.sh/@supabase/supabase-js@2?bundle'
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js",
+    "https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js",
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
   ];
-  let lastError;
-  for (const url of sources) {
-    try {
-      const module = await import(url);
-      if (typeof module.createClient === 'function') {
-        window.supabase = module;
-        return true;
-      }
-      lastError = new Error('Le module Supabase ne contient pas createClient.');
-    } catch (error) {
-      lastError = error;
+  let index = 0;
+  let lastError = null;
+
+  function tryNext() {
+    if (window.supabase && typeof window.supabase.createClient === "function") {
+      resolve(true);
+      return;
     }
+    if (index >= sources.length) {
+      reject(lastError || new Error("Aucune source Supabase n'a pu être chargée."));
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = sources[index++];
+    script.async = true;
+    script.onload = () => {
+      if (window.supabase && typeof window.supabase.createClient === "function") {
+        resolve(true);
+      } else {
+        lastError = new Error("Le fichier chargé ne fournit pas Supabase createClient.");
+        script.remove();
+        tryNext();
+      }
+    };
+    script.onerror = () => {
+      lastError = new Error("Échec du chargement de " + script.src);
+      script.remove();
+      tryNext();
+    };
+    document.head.appendChild(script);
   }
-  throw lastError || new Error('Impossible de charger Supabase.');
-})();
+
+  tryNext();
+});
 </script>
 <style>
 :root{--pink:#ff5ab7;--bg:#100812;--line:#71345d;color-scheme:dark}*{box-sizing:border-box}body{margin:0;background:linear-gradient(130deg,#100812,#30102e);color:#fff5fc;font:16px system-ui}.wrap{max-width:900px;margin:auto;padding:16px}.panel{background:#211326ed;border:1px solid #71345d;border-radius:17px;padding:16px;margin:12px 0}.brand{display:flex;gap:12px;align-items:center}.mark{border:1px solid var(--pink);color:var(--pink);padding:12px;border-radius:12px;font-weight:bold}.muted{color:#c5aabd}.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}.btn,.tabs button{background:#ffffff10;border:1px solid #71345d;color:white;padding:10px 13px;border-radius:11px;white-space:nowrap}.active,.primary{background:#b52b7d!important}.danger{background:#662237}.field{margin:10px 0}.field label{display:block;color:#f4cce5;font-size:13px}.field input,.field textarea,.field select{width:100%;padding:11px;background:#100812;border:1px solid #71345d;border-radius:10px;color:white;margin-top:5px}.hidden{display:none!important}.member,.item{display:flex;justify-content:space-between;gap:10px;padding:12px;margin:8px 0;background:#ffffff09;border:1px solid #71345d;border-radius:12px}.pill{font-size:12px;color:#ffb5df;background:#ff5ab722;border-radius:20px;padding:5px 9px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{padding:15px;border:1px solid #71345d;border-radius:12px}.stat strong{display:block;color:var(--pink);font-size:25px}.notice{padding:12px;background:#ff5ab71a;border:1px solid #71345d;border-radius:10px;margin:10px 0}.arabic{direction:rtl;text-align:right}.empty{text-align:center;color:#c5aabd;padding:16px}button{cursor:pointer}@media(max-width:600px){.wrap{padding:10px}.panel{padding:13px}.member{align-items:flex-start;flex-direction:column}.grid{gap:7px}}
@@ -124,13 +144,17 @@ async function addRule(){let n=Math.max(0,...rules.map(r=>r.rule_number))+1,{err
 async function removeRule(n){if(!confirm("Supprimer cette règle ?"))return;let {error}=await sb.from("game_rules").delete().eq("rule_number",n);if(error)return note("globalMsg",error.message,true);await loadRules()}
 async function addAnnouncement(){let {error}=await sb.from("announcements").insert({title:$("annTitle").value.trim(),content:$("annContent").value.trim(),created_by:user.id});if(error)return note("globalMsg",error.message,true);$("annTitle").value="";$("annContent").value="";await loadAnnouncements()}
 window.supabaseReady.then(() => {
-  if (!window.supabase?.createClient) throw new Error('La bibliothèque Supabase est introuvable.');
+  if (!window.supabase || typeof window.supabase.createClient !== "function") {
+    throw new Error("Le fichier Supabase est chargé, mais createClient est absent.");
+  }
   sb = window.supabase.createClient(URL, KEY);
   return sb.auth.getSession();
-}).then(({data}) => {
-  if (data?.session) boot(data.session.user);
+}).then(({data, error}) => {
+  if (error) throw error;
+  if (data?.session) return boot(data.session.user);
 }).catch(error => {
-  note('authMsg', 'Le service de connexion ne s’est pas chargé : ' + (error?.message || String(error)) + ' Vérifie Internet puis actualise la page.', true);
+  console.error("Initialisation Supabase :", error);
+  note("authMsg", "Impossible d'initialiser Supabase : " + (error?.message || String(error)), true);
 });
 
 // Gestion explicite des boutons de connexion : fonctionne aussi sur mobile.
