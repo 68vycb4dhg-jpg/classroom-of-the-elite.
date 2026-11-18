@@ -90,8 +90,18 @@ async function signIn(){
 }
 window.signIn=signIn;
 async function signUp(){let identifier=$("regName").value.trim(),password=$("regPass").value,groupId=$("regGroup").value,groupCode=$("regCode").value.trim();if(!identifier||!password||!groupCode)return note("authMsg","Remplis tous les champs.",true);let {error}=await sb.functions.invoke("register-player",{body:{identifier,password,groupId,groupCode}});if(error)return note("authMsg",error.message,true);let s=await sb.auth.signInWithPassword({email:email(identifier),password});if(s.error)return note("authMsg",s.error.message,true);boot(s.data.user)}
-async function boot(u){user=u;let {data,error}=await sb.from("profiles").select("id,display_name,group_id,role,points").eq("id",u.id).maybeSingle();if(error||!data)return note("authMsg",error?.message||"Profil introuvable",true);profile=data;isAdmin=data.role==="admin";$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("adminTab").classList.toggle("hidden",!isAdmin);$("welcome").textContent="Bienvenue, "+data.display_name;$("points").textContent=data.points??100;$("groupName").textContent=gname(data.group_id);await Promise.all([loadMembers(),loadRules(),loadAnnouncements()]);if(isAdmin)loadAdmin()}
+async function boot(u){user=u;let {data,error}=await sb.from("profiles").select("id,display_name,group_id,role,points").eq("id",u.id).maybeSingle();if(error||!data)return note("authMsg",error?.message||"Profil introuvable",true);profile=data;isAdmin=data.role==="admin";watchPointChanges();$("auth").classList.add("hidden");$("app").classList.remove("hidden");$("adminTab").classList.toggle("hidden",!isAdmin);$("welcome").textContent="Bienvenue, "+data.display_name;$("points").textContent=data.points??100;$("groupName").textContent=gname(data.group_id);await Promise.all([loadMembers(),loadRules(),loadAnnouncements()]);if(isAdmin)loadAdmin()}
 async function logout(){await sb.auth.signOut();location.reload()}
+function watchPointChanges(){
+  if(!sb||!user)return;
+  sb.channel("profile-points-"+user.id)
+    .on("postgres_changes",{event:"UPDATE",schema:"public",table:"profiles",filter:"id=eq."+user.id},payload=>{
+      const next=payload.new?.points;
+      if(next===undefined||next===null)return;
+      profile.points=next;
+      $("points").textContent=next;
+    }).subscribe();
+}
 function page(id,b){["home","group","ranking","ann","rules","admin"].forEach(x=>$(x).classList.toggle("hidden",x!==id));document.querySelectorAll("#nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");if(id==="ranking")loadRanking();if(id==="admin"&&isAdmin)loadAdmin()}
 async function loadMembers(){let box=$("members");box.innerHTML='<div class="empty">Chargement…</div>';let {data,error}=await sb.rpc("get_my_group_members");if(error){box.innerHTML='<div class="notice">Erreur : '+esc(error.message)+'</div>';return}let m=data||[];$("memberCount").textContent=m.length+" membre(s) dans "+gname(profile.group_id);box.innerHTML=m.map(p=>`<div class="member"><span>${esc(p.display_name)} ${p.id===user.id?'<span class="pill">Toi</span>':""}</span><span class="pill">${p.role==="admin"?"Admin":"Joueur"}</span></div>`).join("")||'<div class="empty">Aucun membre.</div>'}
 async function unlockScores(){
@@ -127,7 +137,24 @@ async function loadAdmin(){let {data,error}=await sb.from("profiles").select("id
 function adminPage(id,b){["players","groups","rulesAdmin","annAdmin"].forEach(x=>$(x).classList.toggle("hidden",x!==id));document.querySelectorAll("#admin .tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active")}
 async function movePlayer(id){let {error}=await sb.rpc("admin_change_player_group",{p_player_id:id,p_group_id:$("move_"+id).value});if(error)return note("globalMsg",error.message,true);loadAdmin();note("globalMsg","Groupe du joueur modifié.")}
 async function saveCode(){let {error}=await sb.rpc("admin_set_group_invite_code",{p_group_id:$("codeGroup").value,p_code:$("newCode").value.trim()});if(error)return note("globalMsg",error.message,true);$("newCode").value="";note("globalMsg","Code d'invitation modifié.")}
-async function adjust(id,d){let n=Number(prompt("Nombre de points ?", "1"));if(!Number.isFinite(n)||n<=0)return;let {error}=await sb.rpc("admin_adjust_points",{p_player_id:id,p_delta:d*Math.floor(n)});if(error)return note("globalMsg",error.message,true);loadAdmin()}
+async function adjust(id,d){
+  if(!isAdmin)return note("globalMsg","Action réservée aux administrateurs.",true);
+  const raw=prompt("Nombre de points ?", "1");
+  if(raw===null)return;
+  const n=Number(raw);
+  if(!Number.isSafeInteger(n)||n<=0)return note("globalMsg","Entre un nombre entier positif.",true);
+  const delta=d*n;
+  try{
+    const {data,error}=await sb.rpc("admin_adjust_points",{p_player_id:id,p_delta:delta});
+    if(error)throw error;
+    // Relire la valeur enregistrée dans la base avant d'annoncer le succès.
+    const {data:updated,error:readError}=await sb.from("profiles").select("points,display_name").eq("id",id).single();
+    if(readError)throw readError;
+    await loadAdmin();
+    if(id===user.id){profile.points=updated.points;$("points").textContent=updated.points;}
+    note("globalMsg",`${updated.display_name} : ${delta>0?"+":""}${delta} points. Nouveau solde : ${updated.points} points.`);
+  }catch(e){note("globalMsg","Échec de la modification des points : "+(e?.message||String(e)),true);}
+}
 async function resetPoints(){if(!confirm("Remettre tous les joueurs à 100 points ?"))return;let {error}=await sb.rpc("admin_reset_points");if(error)return note("globalMsg",error.message,true);boot(user)}
 async function deletePlayer(id){if(!confirm("Supprimer ce joueur ?"))return;let {error}=await sb.rpc("admin_delete_player",{p_player_id:id});if(error)return note("globalMsg",error.message,true);loadAdmin();loadMembers()}
 function renderRulesEdit(){$("rulesEdit").innerHTML=rules.map(r=>`<div class="item"><textarea id="rule_${r.rule_number}">${esc(r.content)}</textarea><button class="btn" onclick="saveRule(${r.rule_number})">Enregistrer</button><button class="btn danger" onclick="removeRule(${r.rule_number})">Supprimer</button></div>`).join("")}
